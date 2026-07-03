@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faluber Translate — 使用效果演示</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:system-ui,'PingFang SC','Microsoft YaHei',sans-serif;background:#0a0a1a;color:#c0c0d0;line-height:1.7}
+  .demo-wrap{max-width:1000px;margin:0 auto;padding:40px 20px}
+  h1{text-align:center;font-size:32px;background:linear-gradient(135deg,#7c5cfc,#5ce0fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+  .subtitle{text-align:center;color:#6a6a8a;margin-bottom:48px}
+
+  .demo-section{margin-bottom:56px}
+  .demo-label{display:inline-block;padding:4px 12px;border-radius:99px;background:rgba(124,92,252,0.12);color:#7c5cfc;font-size:11px;font-weight:600;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.5px}
+  .demo-title{font-size:20px;font-weight:700;color:#f0f0f5;margin-bottom:8px}
+  .demo-desc{color:#6a6a8a;margin-bottom:24px;font-size:14px}
+
+  /* Page mockup */
+  .browser-frame{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);background:#14142a;box-shadow:0 16px 48px rgba(0,0,0,0.4)}
+  .browser-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#1a1a36;border-bottom:1px solid rgba(255,255,255,0.05)}
+  .browser-dot{width:10px;height:10px;border-radius:50%}
+  .browser-dot.r{background:#f87171}.browser-dot.y{background:#facc15}.browser-dot.g{background:#4ade80}
+  .browser-url{padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.04);font-size:11px;color:#6a6a8a;flex:1}
+  .page-content{padding:20px 24px;min-height:200px;position:relative;overflow:hidden}
+  .page-content h2{font-size:20px;color:#f0f0f5;margin-bottom:12px}
+  .page-content h3{font-size:16px;color:#e0e0e0;margin:16px 0 8px}
+  .page-content p{font-size:13px;color:#9090a8;margin-bottom:10px;max-width:700px}
+  .page-content a{color:#7c5cfc}
+
+  /* Floating widget mockup */
+  .widget-mock{position:absolute;bottom:12px;right:12px;width:260px;background:rgba(15,15,26,0.94);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:10px 13px;box-shadow:0 8px 32px rgba(0,0,0,0.45);font-size:11px;z-index:10}
+  .widget-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .widget-toggle{width:32px;height:18px;border-radius:99px;background:#7c5cfc;position:relative}
+  .widget-toggle::after{content:'';position:absolute;top:2.5px;right:2.5px;width:13px;height:13px;border-radius:50%;background:#fff}
+  .widget-btn{padding:5px 14px;border-radius:13px;background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2);font-weight:600;white-space:nowrap}
+  .widget-tokens{font-size:10px;color:#7a7a8e;margin-top:6px;text-align:right}
+  .widget-tokens span{color:#7c5cfc;font-weight:600}
+  /* Translate highlight */
+  .hl{background:rgba(124,92,252,0.15);border-radius:2px;padding:0 1px;transition:background 0.3s}
+  .hl:hover{background:rgba(124,92,252,0.25)}
+
+  /* Explain bubble mockup */
+  .explain-bubble{position:absolute;top:60px;right:80px;max-width:280px;background:rgba(18,16,36,0.96);backdrop-filter:blur(16px);border:1px solid rgba(124,92,252,0.22);border-radius:12px;padding:10px 13px;font-size:12px;line-height:1.6;color:#c0c0d0;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:10}
+  .explain-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+  .explain-word{font-weight:600;color:#9061f9;font-size:13px}
+  .explain-close{color:#7a7a8e;cursor:pointer;font-size:13px}
+  .explain-arrow{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:6px solid rgba(124,92,252,0.22)}
+
+  /* Popup mockup */
+  .popup-mock{width:320px;margin:0 auto;background:#0f0f1a;border:1px solid #2a2a48;border-radius:14px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.5)}
+  .popup-header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .popup-logo{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#7c5cfc,#5ce0fc)}
+  .popup-title{font-weight:700;background:linear-gradient(135deg,#7c5cfc,#5ce0fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .popup-section{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .popup-label{font-size:10px;color:#606078;text-transform:uppercase;margin-bottom:4px}
+  .popup-input{width:100%;padding:7px 10px;background:#12122a;border:1px solid #2a2a48;border-radius:8px;color:#f0f0f5;font-size:11px;font-family:monospace;outline:none}
+  .popup-select{width:100%;padding:7px 10px;background:#12122a;border:1px solid #2a2a48;border-radius:8px;color:#f0f0f5;font-size:11px;appearance:none}
+  .popup-row{display:flex;gap:6px}
+  .popup-row>div{flex:1}
+  .popup-btn{padding:8px 16px;border:none;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer}
+  .popup-btn.primary{background:rgba(124,92,252,0.12);color:#7c5cfc}
+  .popup-btn.success{background:rgba(74,222,128,0.12);color:#4ade80}
+  .popup-footer{display:flex;justify-content:space-between;padding:10px 16px;font-size:10px;color:#606078}
+  .popup-footer select{background:transparent;border:1px solid #2a2a48;border-radius:4px;color:#9090a8;font-size:10px;padding:2px 4px}
+
+  /* Tab bar */
+  .tab-bar{display:flex;gap:0;margin-bottom:40px;justify-content:center}
+  .tab{font-size:13px;padding:8px 20px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#6a6a8a;cursor:pointer;transition:all 0.2s}
+  .tab:first-child{border-radius:8px 0 0 8px}
+  .tab:last-child{border-radius:0 8px 8px 0}
+  .tab.active{background:rgba(124,92,252,0.1);color:#7c5cfc;border-color:rgba(124,92,252,0.2)}
+  .demo-panel{display:none}
+  .demo-panel.active{display:block}
+
+  /* Highlight text animation */
+  @keyframes highlight-pulse{0%,100%{background:rgba(124,92,252,0.15)}50%{background:rgba(124,92,252,0.3)}}
+  .cursor-word{animation:highlight-pulse 1.5s ease-in-out infinite;border-radius:2px;padding:0 2px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="demo-wrap">
+  <h1>使用效果演示</h1>
+  <p class="subtitle">以下是 Faluber Translate 在真实网页上的表现</p>
+
+  <!-- Demo 1: Page Translation -->
+  <div class="demo-section">
+    <div class="demo-label">核心功能</div>
+    <div class="demo-title">整页翻译</div>
+    <div class="demo-desc">点击右下角悬浮球的「翻译」按钮，或按 Alt+T，整页文本被翻译为目标语言。鼠标悬停已翻译文本会高亮显示。</div>
+    <div class="browser-frame">
+      <div class="browser-bar"><div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div><div class="browser-url">wikipedia.org — 维基百科</div></div>
+      <div class="page-content">
+        <h2>Artificial Intelligence</h2>
+        <p><span class="hl">人工智能</span>（AI）是机器展示的智能，与人类和动物展示的自然智能形成对比。领先的 AI 教科书将这一领域定义为<span class="hl">"智能代理"</span>的研究：任何能够感知其环境并采取行动以最大化实现其目标机会的系统。</p>
+        <p>一些知名的 AI 应用包括<span class="hl">高级网络搜索引擎</span>（如 Google 搜索）、<span class="hl">推荐系统</span>（用于 YouTube、Amazon 和 Netflix）、<span class="hl">理解人类语音</span>（如 Siri 和 Alexa）、<span class="hl">自动驾驶汽车</span>（如 Waymo）、<span class="hl">生成式与创意工具</span>（如 ChatGPT 和 AI 艺术），以及在最高水平的<span class="hl">战略游戏</span>（如国际象棋和围棋）中的超人类表现。</p>
+        <h3>History</h3>
+        <p><span class="hl">人工生物</span>在远古时期就作为<span class="hl">讲故事的工具</span>出现，在包括<span class="hl">希腊神话</span>在内的多种文化中都有体现。这些生物及其<span class="hl">创造者</span>的故事预示了后来关于 AI 及其局限性的讨论。</p>
+        <!-- Floating Widget -->
+        <div class="widget-mock">
+          <div class="widget-row">
+            <span style="color:#7a7a8e">自动</span>
+            <div class="widget-toggle"></div>
+            <div class="widget-btn">已翻译</div>
+            <span style="color:#7a7a8e;font-size:16px">▾</span>
+          </div>
+          <div class="widget-tokens">本页 token 消耗 <span>2.5K</span> · 缓存命中率 <span style="color:#4ade80">42%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo 2: Ctrl+Explain -->
+  <div class="demo-section">
+    <div class="demo-label">智能解释</div>
+    <div class="demo-title">Ctrl + 悬停解释</div>
+    <div class="demo-desc">按住 Ctrl 键，将鼠标指向任意词汇，AI 即刻弹出解释气泡。不修改网页文本，零 DOM 污染。</div>
+    <div class="browser-frame">
+      <div class="browser-bar"><div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div><div class="browser-url">github.com — Trending repositories</div></div>
+      <div class="page-content" style="position:relative">
+        <h2 style="font-size:18px">Trending today</h2>
+        <div style="display:flex;gap:16px;margin-top:12px">
+          <div style="flex:1">
+            <p style="margin-bottom:6px"><a href="#">usestrix</a> / <span class="cursor-word">strix</span></p>
+            <p style="font-size:11px;color:#6a6a8a;margin-bottom:12px">An agentic skills framework & software development methodology that works.</p>
+            <p style="margin-bottom:6px"><a href="#">actions</a> / <span class="cursor-word">checkout</span></p>
+            <p style="font-size:11px;color:#6a6a8a;margin-bottom:12px">Action for checking out a repo</p>
+            <p style="margin-bottom:6px"><a href="#">affaan-m</a> / <span class="cursor-word">ECC</span></p>
+            <p style="font-size:11px;color:#6a6a8a">The agent harness performance optimization system.</p>
+          </div>
+        </div>
+        <!-- Explain Bubble -->
+        <div class="explain-bubble" style="top:8px;right:20px">
+          <div class="explain-arrow" style="top:-6px;left:40px"></div>
+          <div class="explain-header"><span class="explain-word">strix</span><span class="explain-close">✕</span></div>
+          <div style="color:#c0c0d0;font-size:11px">Strix 是拉丁语"猫头鹰"，也是华硕旗下高端电竞品牌 ROG Strix 系列的名称。在 GitHub 上常被用作项目名或组织名。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo 3: Select + Ctrl -->
+  <div class="demo-section">
+    <div class="demo-label">快捷操作</div>
+    <div class="demo-title">划词解释</div>
+    <div class="demo-desc">用鼠标选中一段文字，然后按 Ctrl，直接解释整段选中内容。AI 结合网页上下文给出精准解释。</div>
+    <div class="browser-frame">
+      <div class="browser-bar"><div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div><div class="browser-url">amazon.com — Product Details</div></div>
+      <div class="page-content" style="position:relative">
+        <h3 style="font-size:16px">Glorious Gaming Wooden Wrist Rest</h3>
+        <p style="color:#6a6a8a;font-size:12px">Brand: <span style="background:rgba(124,92,252,0.25);padding:0 3px;border-radius:2px">Glorious Gaming</span></p>
+        <p style="font-size:13px;color:#9090a8">Ergonomic keyboard wrist rest made from high-quality wood. Designed to provide optimal comfort during long gaming sessions. Compatible with full-size mechanical keyboards.</p>
+        <!-- Explain Bubble for selection -->
+        <div class="explain-bubble" style="top:20px;right:40px">
+          <div class="explain-arrow" style="left:50%"></div>
+          <div class="explain-header"><span class="explain-word">Glorious Gaming</span><span class="explain-close">✕</span></div>
+          <div style="color:#c0c0d0;font-size:11px">Glorious Gaming 是一家美国游戏外设品牌（2014年成立），以高性价比和注重玩家体验著称。最知名的产品包括轻量化鼠标（Model O 系列）和木制腕托。在电竞社区广受欢迎。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo 4: Popup -->
+  <div class="demo-section">
+    <div class="demo-label">设置面板</div>
+    <div class="demo-title">API 配置与多语言</div>
+    <div class="demo-desc">点击浏览器工具栏插件图标打开设置面板。管理多个 API、切换提供商、拉取模型、选择界面语言。</div>
+    <div class="popup-mock">
+      <div class="popup-header">
+        <div class="popup-logo"></div>
+        <span class="popup-title">Faluber Translate</span>
+      </div>
+      <div class="popup-section">
+        <div class="popup-label">API 设置</div>
+        <div style="display:flex;gap:4px;margin-bottom:8px">
+          <select class="popup-select" style="flex:1"><option>Default</option></select>
+          <button class="popup-btn primary" style="padding:4px 8px">＋</button>
+        </div>
+        <div class="popup-label" style="margin-top:6px">名称</div>
+        <input class="popup-input" value="My DeepSeek" style="margin-bottom:6px">
+        <div class="popup-label">提供商</div>
+        <select class="popup-select" style="margin-bottom:6px"><option>DeepSeek</option></select>
+        <div class="popup-label">API Key</div>
+        <input class="popup-input" type="password" value="sk-••••••••••••••••••" style="margin-bottom:6px">
+        <div class="popup-label">API 地址</div>
+        <input class="popup-input" value="https://api.deepseek.com/v1" style="margin-bottom:6px">
+        <div class="popup-label">模型</div>
+        <div style="display:flex;gap:4px">
+          <input class="popup-input" value="deepseek-chat" style="flex:1" list="models">
+          <button class="popup-btn primary" style="padding:4px 8px">🔄</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="popup-btn primary">测试连接</button>
+          <button class="popup-btn success">💾 保存</button>
+          <span style="font-size:10px;color:#4ade80">✅ 连接成功</span>
+        </div>
+      </div>
+      <div class="popup-footer">
+        <span>快捷键 <kbd style="background:#12122a;padding:1px 4px;border-radius:3px;border:1px solid #2a2a48">Alt+T</kbd></span>
+        <span>🌐 <select style="background:transparent;border:1px solid #2a2a48;border-radius:4px;color:#9090a8;font-size:10px"><option>简体中文</option></select></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo 5: Mode switch -->
+  <div class="demo-section">
+    <div class="demo-label">翻译模式</div>
+    <div class="demo-title">双档切换 + 模式选择器</div>
+    <div class="demo-desc">在悬浮球详情面板中切换翻译模式。标准模式平衡速度与消耗，极速模式 8 路并发全页翻译。</div>
+    <div class="browser-frame">
+      <div class="browser-bar"><div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div><div class="browser-url">任意网页 — 悬浮球详情面板展开</div></div>
+      <div class="page-content" style="display:flex;justify-content:center;padding:30px">
+        <div style="width:260px;background:rgba(15,15,26,0.96);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:14px;font-size:11px;box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:12px;align-items:center">
+            <span style="font-weight:600;color:#e0e0e0;font-size:12px">翻译设置</span>
+            <button style="background:rgba(248,113,133,0.1);color:#f87171;border:none;border-radius:6px;padding:3px 8px;font-size:10px">清除缓存</button>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="font-size:10px;color:#7a7a8e;margin-bottom:3px">Language</div>
+            <select style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 6px;color:#c0c0d0;font-size:11px;appearance:none"><option>🇨🇳 简体中文</option></select>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:12px">
+            <div style="flex:1"><div style="font-size:10px;color:#7a7a8e;margin-bottom:3px">源语种</div><select style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 6px;color:#c0c0d0;font-size:11px;appearance:none"><option>自动检测</option></select></div>
+            <div style="flex:1"><div style="font-size:10px;color:#7a7a8e;margin-bottom:3px">目标语种</div><select style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 6px;color:#c0c0d0;font-size:11px;appearance:none"><option>简体中文</option></select></div>
+          </div>
+          <!-- Mode selector -->
+          <div style="margin-bottom:12px">
+            <div style="font-size:10px;color:#7a7a8e;margin-bottom:3px">翻译模式</div>
+            <div style="position:relative">
+              <div style="display:flex;align-items:center;justify-content:space-between;width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 6px;color:#c0c0d0;font-size:11px;cursor:pointer">
+                <span>⚡ 标准模式</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7a7a8e" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div style="position:absolute;top:100%;left:0;right:0;margin-top:2px;background:#141428;border:1px solid rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;z-index:10">
+                <div style="padding:6px 8px;font-size:11px;color:#9061f9;font-weight:600;background:rgba(124,92,252,0.08)">⚡ 标准模式</div>
+                <div style="padding:6px 8px;font-size:11px;color:#c0c0d0">🚀 极速模式</div>
+              </div>
+            </div>
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.06);margin-bottom:12px"></div>
+          <div style="font-size:10px;color:#7a7a8e;margin-bottom:8px">历史 token 用量</div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:4px 20px;font-size:10px">
+            <span style="color:#7a7a8e">输入</span><span style="color:#e0e0e0;text-align:right">12.5K</span>
+            <span style="color:#7a7a8e">输出</span><span style="color:#e0e0e0;text-align:right">3.2K</span>
+            <span style="color:#7a7a8e">总计</span><span style="color:#e0e0e0;text-align:right">15.7K</span>
+            <span style="color:#7a7a8e">预估费用</span><span style="color:#e0e0e0;text-align:right">¥0.0189</span>
+            <span style="color:#7a7a8e">缓存条目</span><span style="color:#e0e0e0;text-align:right">142</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

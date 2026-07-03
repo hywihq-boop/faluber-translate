@@ -118,18 +118,17 @@ function populateApiForm(api) {
   $('#api-key').value = api.apiKey || '';
   $('#api-url').value = api.apiUrl || '';
   $('#provider').value = detectProvider(api.apiUrl);
-  populateModelDatalist(api.model);
+  populateModelSelect(api.model);
 }
 
-function populateModelDatalist(currentModel) {
-  const dl = $('#model-list');
-  const inp = $('#model');
-  if (!dl || !inp) return;
+function populateModelSelect(currentModel) {
+  const sel = $('#model');
+  if (!sel) return;
   const prov = PROVIDERS[$('#provider').value];
-  const existing = new Set(Array.from(dl.options).map(o => o.value));
-  const addOpt = m => { if (m && !existing.has(m)) { const o = document.createElement('option'); o.value = m; dl.appendChild(o); existing.add(m); } };
+  const existing = new Set(Array.from(sel.options).map(o => o.value));
+  const addOpt = m => { if (m && !existing.has(m)) { sel.appendChild(new Option(m, m)); existing.add(m); } };
   if (prov && prov.models) prov.models.forEach(addOpt);
-  if (currentModel) { addOpt(currentModel); inp.value = currentModel; }
+  if (currentModel) { addOpt(currentModel); sel.value = currentModel; }
 }
 
 function refreshUI() {
@@ -188,11 +187,11 @@ async function fetchModels() {
   try {
     const resp = await chrome.runtime.sendMessage({ type: 'FETCH_MODELS', apiKey: key, apiUrl: url });
     if (resp?.success && resp.models?.length) {
-      const inp = $('#model'); const dl = $('#model-list'); const cur = inp.value;
-      const existing = new Set(Array.from(dl.options).map(o => o.value));
-      resp.models.forEach(m => { if (!existing.has(m)) { const o = document.createElement('option'); o.value = m; dl.appendChild(o); existing.add(m); } });
-      if (cur && !existing.has(cur)) { const o = document.createElement('option'); o.value = cur; dl.appendChild(o); }
-      inp.value = cur;
+      const sel = $('#model'); const cur = sel.value;
+      const existing = new Set(Array.from(sel.options).map(o => o.value));
+      resp.models.forEach(m => { if (!existing.has(m)) { sel.appendChild(new Option(m, m)); existing.add(m); } });
+      if (cur && !existing.has(cur)) { sel.appendChild(new Option(cur, cur)); }
+      sel.value = cur;
       showFetchStatus(`${t('fetchOk')} ${resp.models.length} models`, 'success');
     } else if (resp?.success) {
       showFetchStatus(t('fetchEmpty'), 'error');
@@ -277,12 +276,11 @@ function bindEvents() {
       $('#api-url').value = prov.url;
     }
     // 预填该提供商的默认模型
-    const inp = $('#model'); const dl = $('#model-list');
-    const curModel = inp.value; dl.innerHTML = '';
-    const existing = new Set();
-    if (prov && prov.models) { prov.models.forEach(m => { const o = document.createElement('option'); o.value = m; dl.appendChild(o); existing.add(m); }); }
-    if (curModel && !existing.has(curModel)) { const o = document.createElement('option'); o.value = curModel; dl.appendChild(o); }
-    inp.value = curModel;
+    const sel = $('#model'); const curModel = sel.value;
+    sel.innerHTML = ''; const existing = new Set();
+    if (prov && prov.models) { prov.models.forEach(m => { sel.appendChild(new Option(m, m)); existing.add(m); }); }
+    if (curModel && !existing.has(curModel)) { sel.appendChild(new Option(curModel, curModel)); }
+    sel.value = curModel;
     saveCurrentApiSilent();
   });
 

@@ -101,17 +101,12 @@ async function handleBatchTranslate(msg, sendResponse) {
 
   console.log(`[SW] 批量翻译: ${items.length} 项, ${totalChars} 字符`);
 
+  let logEntry = { items: items.length, chars: totalChars, model, prompt: lines.substring(0, 500), systemPrompt };
   try {
     const body = JSON.stringify({
       model, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: lines }],
       temperature: 0.3, max_tokens: 3000,
     });
-
-    const logEntry = {
-      items: items.length, chars: totalChars, model,
-      prompt: lines.substring(0, 500),
-      systemPrompt,
-    };
 
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: 'POST',
