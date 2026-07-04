@@ -191,7 +191,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
         <div id="lf-card" class="lf-glass lf-card">
           <div id="lf-detail" class="lf-detail">
             <div class="lf-detail-inner">
-              <div class="lf-detail-header"><span class="lf-detail-title" id="lf-title-settings">${t('settings')}</span><span style="display:flex;gap:4px"><button class="lf-clear-btn" style="background:rgba(124,92,252,0.1);color:var(--lf-purple-soft);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:500;cursor:pointer;font-family:inherit;border:none;white-space:nowrap" id="btn-open-panel">🌐 翻译面板</button><button class="lf-clear-btn" id="btn-clear">${t('clearCache')}</button></span></div>
+              <div class="lf-detail-header"><span class="lf-detail-title" id="lf-title-settings">${t('settings')}</span><button class="lf-clear-btn" id="btn-clear">${t('clearCache')}</button></div>
               <div style="margin-bottom:8px;"><div style="font-size:10px;color:var(--lf-text-weak);margin-bottom:3px;">Language</div>
                 <select id="lf-ui-lang" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 6px;color:var(--lf-text);font-size:11px;font-family:inherit;outline:none;cursor:pointer;">
                   <option value="zh-CN">🇨🇳 简体中文</option><option value="zh-TW">🇹🇼 繁體中文</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="ko">🇰🇷 한국어</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="es">🇪🇸 Español</option><option value="pt">🇧🇷 Português</option><option value="ru">🇷🇺 Русский</option><option value="ar">🇸🇦 العربية</option><option value="hi">🇮🇳 हिन्दी</option><option value="th">🇹🇭 ไทย</option><option value="vi">🇻🇳 Tiếng Việt</option><option value="it">🇮🇹 Italiano</option><option value="nl">🇳🇱 Nederlands</option><option value="pl">🇵🇱 Polski</option><option value="tr">🇹🇷 Türkçe</option><option value="id">🇮🇩 Indonesia</option><option value="sv">🇸🇪 Svenska</option>
@@ -223,6 +223,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
                   </div>
                 </div>
               </div>
+              <div style="margin-bottom:4px"><button style="width:100%;background:rgba(124,92,252,0.08);border:1px solid rgba(124,92,252,0.15);border-radius:6px;padding:5px 8px;color:var(--lf-purple-soft);font-size:10px;font-family:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center" id="btn-open-panel"><span>🌐 翻译面板</span><span style="color:var(--lf-text-weak);font-size:9px">Alt+Q</span></button></div>
               <div style="height:1px;background:rgba(255,255,255,0.06);margin-bottom:12px;"></div>
               <div class="lf-detail-header" style="margin-bottom:10px;"><span class="lf-detail-title" id="lf-title-history">${t('history')}</span></div>
               <div class="lf-detail-grid">
@@ -627,7 +628,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
     const langs=[{v:'auto',t:'自动检测'},{v:'zh-CN',t:'简体中文'},{v:'zh-TW',t:'繁體中文'},{v:'en',t:'English'},{v:'ja',t:'日本語'},{v:'ko',t:'한국어'},{v:'fr',t:'Français'},{v:'de',t:'Deutsch'},{v:'es',t:'Español'},{v:'pt',t:'Português'},{v:'ru',t:'Русский'},{v:'ar',t:'العربية'},{v:'hi',t:'हिन्दी'},{v:'th',t:'ไทย'},{v:'vi',t:'Tiếng Việt'},{v:'it',t:'Italiano'},{v:'nl',t:'Nederlands'},{v:'pl',t:'Polski'},{v:'tr',t:'Türkçe'},{v:'id',t:'Indonesia'},{v:'sv',t:'Svenska'}];
     const srcSel=document.getElementById('lf-panel-src'), tgtSel=document.getElementById('lf-panel-tgt');
     langs.forEach(l=>{ srcSel.appendChild(new Option(l.t,l.v)); tgtSel.appendChild(new Option(l.t,l.v)); });
-    tgtSel.value=settings.targetLang||'zh-CN';
+    chrome.storage.sync.get('targetLang',s=>{ if(s.targetLang) tgtSel.value=s.targetLang; });
     // 事件
     let panelDrag=false,px=0,py=0;
     document.getElementById('lf-panel-head').addEventListener('mousedown',e=>{ if(e.target.closest('button'))return; panelDrag=true; const r=p.getBoundingClientRect(); px=e.clientX-r.left; py=e.clientY-r.top; p.style.transform='none'; p.style.left=r.left+'px'; p.style.top=r.top+'px'; });
@@ -653,7 +654,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
     document.getElementById('lf-panel-translate').addEventListener('click',doPanelTranslate);
     document.getElementById('lf-panel-input').addEventListener('input',()=>{ clearTimeout(panelTimer); panelTimer=setTimeout(doPanelTranslate,500); });
   }
-  function togglePanel(){ createPanel(); const p=document.getElementById('lf-panel'); p.classList.toggle('show'); if(p.classList.contains('show')){ document.getElementById('lf-panel-input').focus(); } }
+  function togglePanel(){ createPanel(); const p=document.getElementById('lf-panel'); p.classList.toggle('show'); if(p.classList.contains('show')){ chrome.storage.sync.get('targetLang',s=>{ if(s.targetLang) document.getElementById('lf-panel-tgt').value=s.targetLang; }); document.getElementById('lf-panel-input').focus(); } }
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&document.getElementById('lf-panel')?.classList.contains('show')){ const inp=document.activeElement; if(inp&&inp.id==='lf-panel-input') return; document.getElementById('lf-panel').classList.remove('show'); } });
 
   // 先读折叠状态，再构建 UI（防止异步导致闪烁）
