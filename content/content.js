@@ -138,7 +138,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
 .lf-explain-close:hover{color:var(--lf-text);background:rgba(255,255,255,0.06)}
 .lf-explain-body{word-break:break-word}
 .lf-explain-loading{color:var(--lf-text-weak);font-style:italic}
-#lf-panel{position:fixed;top:60px;right:20px;z-index:2147483645;width:560px;background:rgba(15,15,26,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(124,92,252,0.2);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.55);font-family:system-ui;display:none;user-select:none;overflow:hidden}
+#lf-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2147483645;width:900px;background:rgba(15,15,26,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(124,92,252,0.2);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.55);font-family:system-ui;display:none;user-select:none;overflow:hidden}
 #lf-panel.show{display:block}
 #lf-panel.mini{width:200px}
 #lf-panel.mini .lf-panel-body,#lf-panel.mini .lf-panel-foot{display:none}
@@ -147,12 +147,12 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
 .lf-panel-actions{display:flex;gap:2px}
 .lf-panel-btn{width:26px;height:26px;display:grid;place-items:center;background:transparent;border:none;color:var(--lf-text-weak);cursor:pointer;border-radius:5px;font-size:12px}
 .lf-panel-btn:hover{color:var(--lf-text);background:rgba(255,255,255,0.06)}
-.lf-panel-body{display:flex;gap:0;min-height:200px}
+.lf-panel-body{display:flex;gap:0;min-height:360px}
 .lf-panel-col{flex:1;display:flex;flex-direction:column}
 .lf-panel-col+.lf-panel-col{border-left:1px solid rgba(255,255,255,0.05)}
 .lf-panel-lang{display:flex;align-items:center;padding:6px 10px;gap:6px;border-bottom:1px solid rgba(255,255,255,0.04)}
 .lf-panel-lang select{background:transparent;border:1px solid rgba(255,255,255,0.08);border-radius:5px;color:var(--lf-text);font-size:10px;padding:2px 4px;outline:none;cursor:pointer;font-family:inherit;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M1 2l3 3 3-3' stroke='%239090a8' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 3px center;padding-right:14px}
-.lf-panel-text{flex:1;padding:10px;font-size:13px;font-family:inherit;color:var(--lf-text);background:transparent;border:none;outline:none;resize:none;line-height:1.6;min-height:160px}
+.lf-panel-text{flex:1;padding:14px;font-size:14px;font-family:inherit;color:var(--lf-text);background:transparent;border:none;outline:none;resize:none;line-height:1.6;min-height:300px}
 .lf-panel-text:read-only{color:var(--lf-text-weak)}
 .lf-panel-text::placeholder{color:var(--lf-text-weak);opacity:0.4}
 .lf-panel-foot{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-top:1px solid rgba(255,255,255,0.05);gap:8px}
@@ -629,8 +629,8 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
     tgtSel.value=settings.targetLang||'zh-CN';
     // 事件
     let panelDrag=false,px=0,py=0;
-    document.getElementById('lf-panel-head').addEventListener('mousedown',e=>{ if(e.target.closest('button'))return; panelDrag=true; px=e.clientX-p.offsetLeft; py=e.clientY-p.offsetTop; });
-    document.addEventListener('mousemove',e=>{ if(!panelDrag)return; p.style.left=(e.clientX-px)+'px'; p.style.top=(e.clientY-py)+'px'; p.style.right='auto'; });
+    document.getElementById('lf-panel-head').addEventListener('mousedown',e=>{ if(e.target.closest('button'))return; panelDrag=true; const r=p.getBoundingClientRect(); px=e.clientX-r.left; py=e.clientY-r.top; p.style.transform='none'; p.style.left=r.left+'px'; p.style.top=r.top+'px'; });
+    document.addEventListener('mousemove',e=>{ if(!panelDrag)return; p.style.left=(e.clientX-px)+'px'; p.style.top=(e.clientY-py)+'px'; });
     document.addEventListener('mouseup',()=>{ panelDrag=false; });
     document.getElementById('lf-panel-close').addEventListener('click',()=>p.classList.remove('show'));
     document.getElementById('lf-panel-mini').addEventListener('click',()=>p.classList.toggle('mini'));
