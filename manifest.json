@@ -50,6 +50,13 @@
         "mac": "Alt+T"
       },
       "description": "翻译/还原当前页面"
+    },
+    "translate-panel": {
+      "suggested_key": {
+        "default": "Alt+F",
+        "mac": "Alt+F"
+      },
+      "description": "打开翻译面板"
     }
   }
 }

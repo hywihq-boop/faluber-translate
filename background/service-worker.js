@@ -17,6 +17,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'EXPLAIN_WORD') { handleExplain(msg, sendResponse); return true; }
   if (msg.type === 'TEST_API') { handleTestApi(msg, sendResponse); return true; }
   if (msg.type === 'FETCH_MODELS') { handleFetchModels(msg, sendResponse); return true; }
+  if (msg.type === 'PANEL_TRANSLATE') { handlePanelTranslate(msg, sendResponse); return true; }
   return false;
 });
 
@@ -253,6 +254,13 @@ chrome.commands.onCommand.addListener(async (command) => {
       await chrome.tabs.sendMessage(tab.id, { type:'START_TRANSLATION', settings: { ...apiSettings, sourceLang: stored.sourceLang, targetLang: stored.targetLang } });
     } catch {}
   }
+  if (command === 'translate-panel') {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab?.id) return;
+      await chrome.tabs.sendMessage(tab.id, { type:'TOGGLE_PANEL' });
+    } catch {}
+  }
 });
 
 // ===== 测试连接 =====
@@ -271,6 +279,37 @@ async function handleTestApi(msg, sendResponse) {
       sendResponse({ success:false, error:errMsg });
     }
   } catch (err) { sendResponse({ success: false, error: err.message }); }
+}
+
+// ===== 面板翻译（单条，无[N]格式）=====
+async function handlePanelTranslate(msg, sendResponse) {
+  const { text, sourceLang, targetLang, settings } = msg;
+  const { apiKey, apiUrl, model } = settings;
+  const targetName = LANG_MAP[targetLang] || targetLang;
+  const sourceName = sourceLang && sourceLang !== 'auto' ? (LANG_MAP[sourceLang] || sourceLang) : '';
+  try {
+    const systemPrompt = sourceName
+      ? `Translate from ${sourceName} to ${targetName}. Only output the translation, no extra text.`
+      : `Translate to ${targetName}. Only output the translation, no extra text.`;
+    const response = await fetch(`${apiUrl}/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${apiKey}` },
+      body: JSON.stringify({ model, messages:[{ role:'system', content:systemPrompt },{ role:'user', content:text }], max_tokens:2000, reasoning_effort:'low' }),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const translation = data.choices?.[0]?.message?.content?.trim() || '';
+    if (data.usage) {
+      const key = `tokens_${apiKey.substring(0, 8)}`;
+      const stored = await chrome.storage.local.get(key);
+      const prev = stored[key] || { input:0, output:0, total:0 };
+      await chrome.storage.local.set({ [key]: { input:prev.input+(data.usage.prompt_tokens||0), output:prev.output+(data.usage.completion_tokens||0), total:prev.total+(data.usage.total_tokens||0), cacheHit:prev.cacheHit||0, cacheMiss:prev.cacheMiss||0, lastModel:model } });
+      chrome.runtime.sendMessage({ type:'TOKEN_USAGE_UPDATED' }).catch(()=>{});
+      sendResponse({ success:true, translation, usage:data.usage });
+    } else {
+      sendResponse({ success:true, translation });
+    }
+  } catch(err) { sendResponse({ success:false, error:err.message }); }
 }
 
 // ===== 获取模型列表 =====
