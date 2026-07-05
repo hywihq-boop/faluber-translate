@@ -5,6 +5,9 @@
 (function () {
   'use strict';
 
+  window.addEventListener('unhandledrejection',e=>{ if(e.reason?.message?.includes('context invalidated')){ e.preventDefault(); console.warn('[LF] 扩展已更新，请刷新页面'); } });
+  window.addEventListener('error',e=>{ if(e.message?.includes('context invalidated')){ e.preventDefault(); console.warn('[LF] 扩展已更新，请刷新页面'); return false; } },true);
+
   let isTranslated = false, isTranslating = false;
   let translationMap = new Map();
   let translationCache = new Map();
@@ -451,7 +454,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
   function shouldSkip(el) { if (EXCLUDE_TAGS.has(el.tagName)) return true; if (el.closest('[id^="lf-"],[id^="linguaflow"]')) return true; if (el.isContentEditable||el.closest('[contenteditable="true"]')) return true; return false; }
   function isTranslatable(text) { const t = text.trim(); const targetLang = settings.targetLang||'zh-CN'; const minLen=CJK_TARGETS.includes(targetLang)?3:1; if (!t||t.length<minLen) return false; if (RE_SYMBOLS.test(t)) return false; if (RE_URL.test(t)) return false; if (/^Test[: ]/i.test(t)) return false; if (/^[a-z]+-[a-z]+-[a-z]+$/.test(t)&&t.length>15) return false; if (CJK_TARGETS.includes(targetLang)&&/[一-鿿]/.test(t)) { let cjk=0; for (const ch of t) { if (ch>='一'&&ch<='鿿') cjk++; } if (cjk/t.length>0.3) return false; if (cjk>0&&!/[a-zA-Z]{3,}/.test(t)) return false; } return RE_LETTER.test(t); }
   function collectTextNodes(root, opts={}) { const targetLang=settings.targetLang||'zh-CN'; const { minLen=CJK_TARGETS.includes(targetLang)?3:1, viewportOnly=false, viewportMargin } = opts; const result=[]; const w=document.createTreeWalker(root, NodeFilter.SHOW_TEXT); const rectCache=new Map(), styleCache=new Map(); while (w.nextNode()) { const node=w.currentNode, parent=node.parentElement; if (!parent) continue; if (shouldSkip(parent)) continue; let vis=styleCache.get(parent); if (vis===undefined) { vis=isVisible(parent); styleCache.set(parent,vis); } if (!vis) continue; const text=node.textContent.trim(); if (text.length<minLen) continue; if (!isTranslatable(text)) continue; if (translationMap.has(node)||inFlightNodes.has(node)) continue; let rect=rectCache.get(parent); if (!rect) { rect=parent.getBoundingClientRect(); rectCache.set(parent,rect); } if (viewportOnly) { if (rect.width===0&&rect.height===0) continue; const m=viewportMargin??window.innerHeight; if (rect.bottom<-m||rect.top>window.innerHeight+m) continue; } result.push({ node, text, y:rect.top, parent }); } result.sort((a,b)=>a.y-b.y); const merged=[]; for(let i=0;i<result.length;i++){ const cur=result[i]; let txt=cur.text, nodes=[cur.node], j=i+1; while(j<result.length){ const nxt=result[j]; const sameParent=nxt.parent===cur.parent; const siblingParents=nxt.parent&&cur.parent&&nxt.parent.parentElement===cur.parent.parentElement&&cur.parent.nextElementSibling===nxt.parent; if(sameParent||siblingParents){ txt+=' '+nxt.text; nodes.push(nxt.node); j++; } else break; } merged.push({node:nodes[0],text:txt,y:cur.y,subNodes:nodes.length>1?nodes:null}); i=j-1; } return merged; }
-  function getTabId() { return new Promise(r => { if (tabId!=null) { r(tabId); return; } chrome.runtime.sendMessage({ type:'GET_TAB_ID' }, resp => { tabId = resp?.tabId ?? 'unknown'; r(tabId); }); }); }
+  function getTabId() { return new Promise(r => { if (tabId!=null) { r(tabId); return; } chrome.runtime.sendMessage({ type:'GET_TAB_ID' }, resp => { if (chrome.runtime.lastError) { tabId='unknown'; r(tabId); return; } tabId = resp?.tabId ?? 'unknown'; r(tabId); }); }); }
 
   // ===== 翻译 =====
   async function startTranslation(transSettings, opts={}) { const { continuous=true } = opts; if (isTranslated) restoreOriginal(); settings=transSettings; abortController=new AbortController(); pageTokens={ input:0,output:0,total:0,cacheHits:0,apiCalls:0 }; const cfg=MODES[mode]||MODES.medium;const textNodes=collectTextNodes(document.body,{ viewportOnly:!cfg.fullPage, viewportMargin:cfg.viewportMargin }); const inputEls=document.body.querySelectorAll('input[type="submit"],input[type="button"],button:not(:empty),[role="button"]'); for (const el of inputEls) { if (shouldSkip(el)) continue; const v=(el.value||'').trim(); if (v.length<3||!isTranslatable(v)) continue; if (!isInViewport(el,200)) continue; textNodes.push({ node:el, text:v, y:el.getBoundingClientRect().top, isInput:true }); } textNodes.sort((a,b)=>a.y-b.y); if (!textNodes.length) { showToast('warning','⚠️ '+t('noText')); return; } const stats=await translateAndApply(textNodes, textNodes.length); if (abortController.signal.aborted) return; isTranslated=true; isTranslating=false; if (continuous) { if (cfg.scroll) startScrollObserver(); if (cfg.mutation) startMutationObserver(); } updateUsageBall(); if (!stats.allCached) { const ok=stats.completed-stats.failed; showToast('success',stats.failed?`✅ ${ok}/${stats.completed} ${t('segments')} (${stats.failed} ${t('failed')})`:`✅ ${t('completed')} (${stats.completed} ${t('segments')})`); } }
@@ -660,6 +663,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
 
   // 先读折叠状态，再构建 UI（防止异步导致闪烁）
   (async()=>{
+    try {
     const r = await chrome.storage.local.get('lf_collapsed');
     buildUI();
     if (r.lf_collapsed) {
@@ -667,6 +671,6 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
       document.getElementById('lf-mini').classList.add('visible');
       document.getElementById('btn-collapse').classList.add('collapsed');
     }
-    updateMiniText(); const stored=await chrome.storage.sync.get('uiLang'); if(stored.uiLang&&stored.uiLang!==uiLang){ uiLang=stored.uiLang; updateAllUIText(); const sel=document.getElementById('lf-ui-lang'); if(sel) sel.value=uiLang; } await getTabId(); await loadPersistentCache(); if(await getTabMode()){ switchIntent=true; showTranslation=true; updateUsageBall(); setTimeout(()=>loadAndTranslate({ continuous:true }),800); } })();
+    updateMiniText(); const stored=await chrome.storage.sync.get('uiLang'); if(stored.uiLang&&stored.uiLang!==uiLang){ uiLang=stored.uiLang; updateAllUIText(); const sel=document.getElementById('lf-ui-lang'); if(sel) sel.value=uiLang; } await getTabId(); await loadPersistentCache(); if(await getTabMode()){ switchIntent=true; showTranslation=true; updateUsageBall(); setTimeout(()=>loadAndTranslate({ continuous:true }),800); } } catch(e) { if(!e.message?.includes('context invalidated')) console.error('[LF] 初始化失败:',e.message); } })();
   console.log('🌐 Faluber Translate 已加载');
 })();
