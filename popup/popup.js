@@ -359,6 +359,9 @@ async function saveCurrentApiSilent() {
   // 填充 UI
   refreshUI();
 
+  // 显示版本号
+  fetch('../manifest.json').then(r=>r.json()).then(m=>{ const el=document.getElementById('popup-version'); if(el) el.textContent=m.version; }).catch(()=>{});
+
   // 绑定事件
   bindEvents();
 
