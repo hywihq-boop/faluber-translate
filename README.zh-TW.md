@@ -1,35 +1,34 @@
 <div align="center">
-  <img src="icons/logo.png" alt="Faluber Translate" width="96" height="96" style="border-radius:18px;box-shadow:0 0 32px rgba(124,92,252,0.35)">
+  <img src="icons/logo.png" width="96" height="96" style="border-radius:18px">
 
   # 🌐 Faluber Translate
 
   ### AI 智慧網頁翻譯外掛
 
-  基於 AI 的 Chrome 瀏覽器翻譯外掛。文字節點級 DOM 操作，50 種語言，相容 OpenAI 格式 API。
-
-  ![version](https://img.shields.io/badge/version-2.0.10-7c5cfc?style=flat-square)
-  ![manifest](https://img.shields.io/badge/manifest-v3-blue?style=flat-square)
-  ![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-  ![chrome](https://img.shields.io/badge/Chrome-✓-4ade80?style=flat-square)
-  ![edge](https://img.shields.io/badge/Edge-✓-4ade80?style=flat-square)
+  <sub>基於 AI 的 Chrome 瀏覽器翻譯外掛。文字節點級 DOM 操作。<br>50 種目標語言 · 20 種介面語言 · 相容 OpenAI 格式 API · MIT 開源。</sub>
 
   <br>
+
+  ![version](https://img.shields.io/badge/v2.0.10-7c5cfc?style=flat-square)
+  ![manifest](https://img.shields.io/badge/MV3-blue?style=flat-square)
+  ![license](https://img.shields.io/badge/MIT-green?style=flat-square)
+
+  <br><br>
+
+  <a href="https://github.com/hywihq-boop/faluber-translate/releases"><img src="https://img.shields.io/badge/⬇_下載最新版-7c5cfc?style=for-the-badge" alt="下載"></a>
+  &nbsp;
+  <a href="https://github.com/hywihq-boop/faluber-translate"><img src="https://img.shields.io/badge/⭐_Star_on_GitHub-222?style=for-the-badge" alt="Star"></a>
+
+  <br><br>
 
   <table align="center"><tr>
-  <td align="center"><b>50+</b><br><sup>支援語言</sup></td>
-  <td align="center"><b>2</b><br><sup>翻譯模式</sup></td>
-  <td align="center"><b>8</b><br><sup>併發翻譯</sup></td>
-  <td align="center"><b>10</b><br><sup>API 提供商</sup></td>
-  <td align="center"><b>~1s</b><br><sup>詞語解釋</sup></td>
+  <td align="center"><b style="font-size:20px;color:#5ce0fc">50+</b><br><sub style="color:#888">支援語言</sub></td>
+  <td align="center"><b style="font-size:20px;color:#5ce0fc">2</b><br><sub style="color:#888">翻譯模式</sub></td>
+  <td align="center"><b style="font-size:20px;color:#5ce0fc">8</b><br><sub style="color:#888">併發翻譯</sub></td>
+  <td align="center"><b style="font-size:20px;color:#5ce0fc">10</b><br><sub style="color:#888">API 提供商</sub></td>
+  <td align="center"><b style="font-size:20px;color:#5ce0fc">~1s</b><br><sub style="color:#888">詞語解釋</sub></td>
   </tr></table>
-
-  <br>
-  <a href="https://github.com/hywihq-boop/faluber-translate/releases"><img src="https://img.shields.io/badge/⬇_下載-最新版本-7c5cfc?style=for-the-badge" alt="下載"></a>
-  &nbsp;
-  <a href="https://github.com/hywihq-boop/faluber-translate"><img src="https://img.shields.io/badge/⭐_Star-on_GitHub-5ce0fc?style=for-the-badge" alt="Star"></a>
 </div>
-
-<br>
 
 ---
 
@@ -40,13 +39,13 @@
 <td width="50%">
 
 ### 🚀 一鍵整頁翻譯
-點擊懸浮球或按 <kbd>Alt+T</kbd> 翻譯整個頁面。文字節點級替換，不破壞頁面結構。
+點擊懸浮球或按 <kbd>Alt+T</kbd> 翻譯整個頁面。文字節點級 DOM 替換，不破壞頁面結構。支援自動檢測來源語言。
 
 </td>
 <td width="50%">
 
 ### 🔍 Ctrl + 智慧解釋
-滑鼠指向詞彙 + 單擊 <kbd>Ctrl</kbd> 彈出 AI 解釋氣泡。選取文字 + <kbd>Ctrl</kbd> 解釋整段。零 DOM 污染。
+滑鼠指向任意詞彙 + 單擊 <kbd>Ctrl</kbd> 彈出 AI 解釋氣泡。選取文字 + <kbd>Ctrl</kbd> 解釋整段。兩級回退：NLP 提示詞 → HTML 檢測。零 DOM 污染。
 
 </td>
 </tr>
@@ -55,13 +54,13 @@
 
 ### ⚡ 雙檔翻譯模式
 **標準** — 3 併發，視野優先，速度與消耗均衡。<br>
-**極速** — 8 併發，全頁翻譯，速度拉滿。
+**極速** — 8 併發，全頁翻譯，速度拉滿。設定持久化保存。
 
 </td>
 <td width="50%">
 
 ### 🔑 多 API 管理
-內建 10 家提供商預設。儲存多個 API 設定，隨時切換。自動拉取可用模型，支援自訂介面。
+內建 10 家提供商預設。儲存多個 API 設定隨時切換。自動拉取可用模型。支援自訂介面。
 
 </td>
 </tr>
@@ -69,17 +68,190 @@
 <td width="50%">
 
 ### 📋 翻譯面板 <kbd>Alt+Q</kbd>
-左右佈局的浮動翻譯面板，輸入原文即時翻譯。獨立於頁面翻譯，支援任意語言對。
+左右佈局的浮動翻譯面板。輸入原文即時翻譯，獨立於頁面翻譯。支援任意語言對。
 
 </td>
 <td width="50%">
 
 ### 💾 智慧快取
-記憶體 + 持久化雙層快取，1 小時 TTL。重複內容不消耗 token。語言切換自動清除。
+記憶體 + 持久化雙層快取。最多 2,000 條、1 小時 TTL。每 30 秒 + `beforeunload` 自動刷盤。切換語言自動清除。
 
 </td>
 </tr>
 </table>
+
+---
+
+## 🖥️ 效果展示
+
+### 整頁翻譯 + 懸浮球
+
+點擊右下角懸浮球的「翻譯」按鈕或按 <kbd>Alt+T</kbd>，整頁文字即刻翻譯。滑鼠懸停已翻譯文字會高亮顯示原文。
+
+<div style="border-radius:12px;overflow:hidden;border:1px solid #30363d;background:#161b22;max-width:780px;margin:0 auto 20px">
+  <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#21262d;border-bottom:1px solid #30363d">
+    <span style="width:10px;height:10px;border-radius:50%;background:#f87171;display:inline-block"></span>
+    <span style="width:10px;height:10px;border-radius:50%;background:#facc15;display:inline-block"></span>
+    <span style="width:10px;height:10px;border-radius:50%;background:#4ade80;display:inline-block"></span>
+    <span style="padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.05);font-size:11px;color:#8b949e;flex:1;margin-left:4px">wikipedia.org — Artificial Intelligence</span>
+  </div>
+  <div style="padding:24px;position:relative;min-height:180px">
+    <h3 style="color:#e6edf3;margin-bottom:12px;font-size:18px">Artificial Intelligence</h3>
+    <p style="color:#8b949e;font-size:13px;margin-bottom:10px;line-height:1.7">
+      <mark style="background:rgba(124,92,252,0.2);color:#c0c0d0;padding:0 2px;border-radius:2px">人工智能</mark>（AI）是機器展示的智能。領先的 AI 教科書將這一領域定義為<mark style="background:rgba(124,92,252,0.2);color:#c0c0d0;padding:0 2px;border-radius:2px">"智慧代理"</mark>的研究：任何能夠感知其環境並採取行動以最大化實現其目標機會的系統。
+    </p>
+    <p style="color:#8b949e;font-size:13px;margin-bottom:10px;line-height:1.7">
+      AI 應用包括<mark style="background:rgba(124,92,252,0.2);color:#c0c0d0;padding:0 2px;border-radius:2px">進階搜尋引擎</mark>、<mark style="background:rgba(124,92,252,0.2);color:#c0c0d0;padding:0 2px;border-radius:2px">推薦系統</mark>、<mark style="background:rgba(124,92,252,0.2);color:#c0c0d0;padding:0 2px;border-radius:2px">語音辨識</mark>、<mark style="background:rgba(124,92,252,0.2);color:#c0c0d0;padding:0 2px;border-radius:2px">自動駕駛</mark>以及<mark style="background:rgba(124,92,252,0.2);color:#c0c0d0;padding:0 2px;border-radius:2px">生成式 AI</mark>。
+    </p>
+    <h4 style="color:#e6edf3;margin:16px 0 8px;font-size:15px">History</h4>
+    <p style="color:#8b949e;font-size:13px;line-height:1.7">
+      <mark style="background:rgba(124,92,252,0.2);color:#c0c0d0;padding:0 2px;border-radius:2px">人造生命</mark>的概念早在古希臘神話中就已出現。這些故事預示了後來關於 AI 及其侷限性的討論。
+    </p>
+    <div style="position:absolute;bottom:14px;right:16px">
+      <div style="border-radius:18px;background:#0d1117;border:1px solid #30363d;box-shadow:0 8px 24px rgba(0,0,0,0.6);overflow:hidden;width:250px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px">
+          <span style="font-size:11px;color:#8b949e">自動</span>
+          <span style="display:inline-block;width:32px;height:18px;border-radius:99px;background:#7c5cfc;position:relative"><span style="position:absolute;top:2px;right:3px;width:14px;height:14px;border-radius:50%;background:#fff;display:inline-block"></span></span>
+          <span style="padding:5px 14px;border-radius:13px;background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2);font-size:11px;font-weight:600">已翻譯</span>
+        </div>
+        <div style="padding:6px 13px;background:rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#8b949e">
+          <span>Token <b style="color:#7c5cfc">2.5K</b></span>
+          <span style="color:#4ade80">快取命中 42%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+### Ctrl + 智慧解釋
+
+滑鼠指向任意詞彙，單擊 <kbd>Ctrl</kbd> 鍵，AI 即刻彈出解釋氣泡。不修改網頁文字，零 DOM 污染。
+
+<div style="border-radius:12px;overflow:hidden;border:1px solid #30363d;background:#161b22;max-width:780px;margin:0 auto 20px">
+  <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#21262d;border-bottom:1px solid #30363d">
+    <span style="width:10px;height:10px;border-radius:50%;background:#f87171;display:inline-block"></span>
+    <span style="width:10px;height:10px;border-radius:50%;background:#facc15;display:inline-block"></span>
+    <span style="width:10px;height:10px;border-radius:50%;background:#4ade80;display:inline-block"></span>
+    <span style="padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.05);font-size:11px;color:#8b949e;flex:1;margin-left:4px">github.com — Trending today</span>
+  </div>
+  <div style="padding:24px;position:relative;min-height:200px">
+    <p style="margin-bottom:6px;font-size:14px"><span style="color:#58a6ff">usestrix</span> / <mark style="background:rgba(124,92,252,0.3);color:#e6edf3;padding:0 3px;border-radius:2px">strix</mark></p>
+    <p style="font-size:11px;color:#8b949e;margin-bottom:16px">An agentic skills framework &amp; software development methodology.</p>
+    <p style="margin-bottom:6px;font-size:14px"><span style="color:#58a6ff">actions</span> / checkout</p>
+    <p style="font-size:11px;color:#8b949e;margin-bottom:16px">Action for checking out a repo</p>
+    <p style="margin-bottom:6px;font-size:14px"><span style="color:#58a6ff">affaan-m</span> / ECC</p>
+    <p style="font-size:11px;color:#8b949e">The agent harness performance optimization system.</p>
+    <div style="position:absolute;top:12px;right:20px;max-width:250px;background:#161b22;border:1px solid rgba(124,92,252,0.35);border-radius:12px;padding:10px 13px;font-size:12px;line-height:1.6;color:#c0c0d0;box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <b style="color:#9061f9;font-size:13px">strix</b>
+        <span style="color:#8b949e;cursor:default">✕</span>
+      </div>
+      <div style="font-size:11px;color:#c0c0d0">
+        Strix 是拉丁語"貓頭鷹"，也是華碩旗下高階電競品牌 ROG Strix 系列的名稱。GitHub 上常被用作專案名或組織名。
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+### 翻譯面板 — <kbd>Alt+Q</kbd>
+
+按 <kbd>Alt+Q</kbd> 開啟浮動翻譯面板，左側輸入原文、右側輸出譯文。支援任意語言對，獨立於頁面翻譯。
+
+<div style="border-radius:12px;overflow:hidden;border:1px solid #30363d;background:#161b22;max-width:780px;margin:0 auto 20px">
+  <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#21262d;border-bottom:1px solid #30363d">
+    <span style="width:10px;height:10px;border-radius:50%;background:#f87171;display:inline-block"></span>
+    <span style="width:10px;height:10px;border-radius:50%;background:#facc15;display:inline-block"></span>
+    <span style="width:10px;height:10px;border-radius:50%;background:#4ade80;display:inline-block"></span>
+    <span style="padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.05);font-size:11px;color:#8b949e;flex:1;margin-left:4px">Faluber Translate — 翻譯面板</span>
+  </div>
+  <div style="padding:24px;display:flex;gap:12px;align-items:stretch;min-height:160px">
+    <div style="flex:1;display:flex;flex-direction:column">
+      <span style="font-size:10px;color:#8b949e;margin-bottom:4px;text-transform:uppercase">輸入 — English</span>
+      <textarea readonly style="flex:1;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#c0c0d0;padding:12px;font-size:12px;resize:none;min-height:140px;width:100%;font-family:inherit;outline:none">Artificial intelligence is transforming how we interact with technology. From voice assistants to self-driving cars, AI applications are becoming ubiquitous.</textarea>
+    </div>
+    <div style="display:flex;align-items:center;color:#7c5cfc;font-size:20px;padding:20px 0">→</div>
+    <div style="flex:1;display:flex;flex-direction:column">
+      <span style="font-size:10px;color:#8b949e;margin-bottom:4px;text-transform:uppercase">輸出 — 繁體中文</span>
+      <textarea readonly style="flex:1;background:#0d1117;border:1px solid rgba(74,222,128,0.2);border-radius:8px;color:#4ade80;padding:12px;font-size:12px;resize:none;min-height:140px;width:100%;font-family:inherit;outline:none">人工智慧正在改變我們與技術互動的方式。從語音助手到自動駕駛汽車，AI 應用在我們的日常生活中變得越來越無處不在。</textarea>
+    </div>
+  </div>
+</div>
+
+---
+
+### API 設定與模式切換
+
+管理多 API 設定、切換提供商、自動拉取可用模型、切換翻譯模式——全部在 Popup 彈窗或懸浮球詳情面板中完成。
+
+<div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin:0 auto">
+  <div style="width:300px;background:#0d1117;border:1px solid #30363d;border-radius:14px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4)">
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #21262d">
+      <div style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#7c5cfc,#5ce0fc)"></div>
+      <b style="background:linear-gradient(135deg,#7c5cfc,#5ce0fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Faluber Translate</b>
+    </div>
+    <div style="padding:14px 16px;border-bottom:1px solid #21262d">
+      <span style="font-size:10px;color:#6e7681;text-transform:uppercase">API 設定</span>
+      <div style="display:flex;gap:4px;margin:6px 0 8px">
+        <select style="flex:1;padding:7px 10px;background:#161b22;border:1px solid #30363d;border-radius:8px;color:#c0c0d0;font-size:11px"><option>Default</option></select>
+        <span style="padding:4px 8px;background:rgba(124,92,252,0.12);color:#7c5cfc;border-radius:4px;font-size:14px;cursor:default">＋</span>
+      </div>
+      <span style="font-size:10px;color:#6e7681;text-transform:uppercase">提供商</span>
+      <select style="width:100%;padding:7px 10px;background:#161b22;border:1px solid #30363d;border-radius:8px;color:#c0c0d0;font-size:11px;margin:4px 0 8px"><option>DeepSeek</option></select>
+      <span style="font-size:10px;color:#6e7681;text-transform:uppercase">API Key</span>
+      <input type="password" value="sk-••••••••••••••" readonly style="width:100%;padding:7px 10px;background:#161b22;border:1px solid #30363d;border-radius:8px;color:#c0c0d0;font-size:11px;margin:4px 0 8px;font-family:monospace;outline:none">
+      <span style="font-size:10px;color:#6e7681;text-transform:uppercase">API 位址</span>
+      <input value="https://api.deepseek.com/v1" readonly style="width:100%;padding:7px 10px;background:#161b22;border:1px solid #30363d;border-radius:8px;color:#c0c0d0;font-size:11px;margin:4px 0 8px;font-family:monospace;outline:none">
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <span style="padding:6px 12px;background:rgba(124,92,252,0.12);color:#7c5cfc;border-radius:8px;font-size:11px;font-weight:600;cursor:default">測試連線</span>
+        <span style="padding:6px 12px;background:rgba(74,222,128,0.12);color:#4ade80;border-radius:8px;font-size:11px;font-weight:600;cursor:default">💾 儲存</span>
+        <span style="font-size:10px;color:#4ade80;display:flex;align-items:center">✅ 連線成功</span>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:10px 16px;font-size:10px;color:#6e7681">
+      <span>快速鍵 <kbd style="background:#161b22;border:1px solid #30363d;padding:1px 4px;border-radius:3px;font-size:9px">Alt+T</kbd></span>
+      <span>🌐 繁體中文</span>
+    </div>
+  </div>
+
+  <div style="width:260px;background:#0d1117;border:1px solid #30363d;border-radius:14px;padding:14px;font-size:11px;box-shadow:0 8px 32px rgba(0,0,0,0.4);align-self:flex-start">
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+      <b style="color:#e6edf3;font-size:13px">翻譯設定</b>
+      <span style="background:rgba(248,113,133,0.1);color:#f87171;border-radius:6px;padding:3px 8px;font-size:10px;cursor:default">清除快取</span>
+    </div>
+    <div style="margin-bottom:10px">
+      <span style="font-size:10px;color:#6e7681">Language</span>
+      <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 8px;color:#c0c0d0;font-size:11px;margin-top:3px">🇨🇳 繁體中文 ▾</div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <div style="flex:1"><span style="font-size:10px;color:#6e7681">來源語種</span><div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 8px;color:#c0c0d0;font-size:11px;margin-top:3px">自動檢測 ▾</div></div>
+      <div style="flex:1"><span style="font-size:10px;color:#6e7681">目標語種</span><div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 8px;color:#c0c0d0;font-size:11px;margin-top:3px">繁體中文 ▾</div></div>
+    </div>
+    <div style="margin-bottom:12px">
+      <span style="font-size:10px;color:#6e7681">翻譯模式</span>
+      <div style="margin-top:3px">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 8px;color:#c0c0d0;font-size:11px">⚡ 標準模式 <span style="color:#6e7681">▾</span></div>
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;margin-top:1px;overflow:hidden">
+          <div style="padding:6px 8px;font-size:11px;color:#9061f9;font-weight:600;background:rgba(124,92,252,0.08)">⚡ 標準模式</div>
+          <div style="padding:6px 8px;font-size:11px;color:#c0c0d0">🚀 極速模式</div>
+        </div>
+      </div>
+    </div>
+    <div style="height:1px;background:#21262d;margin:12px 0"></div>
+    <table style="width:100%;font-size:10px;border:none">
+      <tr><td style="color:#6e7681;border:none;padding:2px 0">輸入</td><td style="color:#e6edf3;text-align:right;border:none;padding:2px 0">12.5K</td></tr>
+      <tr><td style="color:#6e7681;border:none;padding:2px 0">輸出</td><td style="color:#e6edf3;text-align:right;border:none;padding:2px 0">3.2K</td></tr>
+      <tr><td style="color:#6e7681;border:none;padding:2px 0">總計</td><td style="color:#e6edf3;text-align:right;border:none;padding:2px 0">15.7K</td></tr>
+      <tr><td style="color:#6e7681;border:none;padding:2px 0">預估費用</td><td style="color:#e6edf3;text-align:right;border:none;padding:2px 0">¥0.0189</td></tr>
+      <tr><td style="color:#6e7681;border:none;padding:2px 0">快取條目</td><td style="color:#e6edf3;text-align:right;border:none;padding:2px 0">142</td></tr>
+    </table>
+  </div>
+</div>
+
+<br>
 
 ---
 
@@ -87,26 +259,15 @@
 
 <table>
 <tr>
-<td align="center" width="33%">
-  <b>1. 安裝</b><br>
-  <sup>從 <a href="https://github.com/hywihq-boop/faluber-translate/releases">Releases</a> 下載 zip，解壓縮後<br>在 <code>chrome://extensions</code> 載入</sup>
-</td>
-<td align="center" width="33%">
-  <b>2. 設定 API</b><br>
-  <sup>選擇提供商，填入 API Key，<br>測試連線，儲存</sup>
-</td>
-<td align="center" width="33%">
-  <b>3. 翻譯</b><br>
-  <sup>開啟任意網頁，點擊懸浮球<br>或按 <kbd>Alt+T</kbd></sup>
-</td>
+<td align="center" width="33%"><b style="font-size:16px">1. 安裝</b><br><sub>從 <a href="https://github.com/hywihq-boop/faluber-translate/releases">Releases</a> 下載 zip，解壓縮後<br>在 <code>chrome://extensions</code> 載入已解壓的擴充功能</sub></td>
+<td align="center" width="33%"><b style="font-size:16px">2. 設定</b><br><sub>選擇提供商，填入 API Key，<br>測試連線，儲存</sub></td>
+<td align="center" width="33%"><b style="font-size:16px">3. 翻譯</b><br><sub>開啟任意網頁，點擊懸浮球<br>或按 <kbd>Alt+T</kbd></sub></td>
 </tr>
 </table>
 
 ---
 
 ## 🔧 10 家 API 提供商
-
-內建預設，相容任意 OpenAI 格式 API：
 
 | 提供商 | API 位址 |
 |--------|----------|
@@ -135,36 +296,30 @@
   → DOM 文字替換 → 即時進度條
 ```
 
-### 智慧處理
-- 跳過 `<script>`、`<style>`、`<code>` 等非內容標籤
-- 過濾數字、URL、Emoji 等不可翻譯內容
-- 偵測 `display:none`、`visibility:hidden` 隱藏狀態
-- 保留 HTML 實體和特殊字元
-- 相鄰文字節點合併後傳送
-
 ### 模式對比
 
 | 參數 | 標準 | 極速 |
 |------|------|------|
 | 併發數 | 3 | 8 |
 | 分批大小 | 400 字元 | 250 字元 |
-| 翻譯範圍 | 僅可見區域 | 全頁 |
+| 翻譯範圍 | 可見區域 | 全頁 |
 | 捲動偵測 | ✅ | — |
 | 懸停偵測 | ✅ | — |
 | 動態內容 | ✅ | ✅ |
 
-### 快取系統
-| 層級 | 儲存 | 上限 | TTL |
-|------|------|------|-----|
-| 記憶體 | `Map<原文, 譯文>` | 無限制 | 工作階段 |
-| 持久化 | `chrome.storage.local` | 2,000 | 1 小時 |
+### 快取
+
+| 層級 | 儲存 | 上限 | TTL | 刷盤 |
+|------|------|------|-----|------|
+| 記憶體 | `Map<原文, 譯文>` | ∞ | 工作階段 | — |
+| 持久化 | `chrome.storage.local` | 2,000 | 1 小時 | 30s + `beforeunload` |
 
 ---
 
-## 🌍 50 種目標語言 · 20 種介面語言
+## 🌍 50 種目標 · 20 種介面語言
 
 <details>
-<summary>展開檢視完整語言列表</summary>
+<summary><b>展開檢視全部 50 種語言</b></summary>
 <br>
 
 `简体中文` `繁體中文` `English` `日本語` `한국어` `Français` `Deutsch` `Español` `Português` `Русский` `العربية` `हिन्दी` `ไทย` `Tiếng Việt` `Italiano` `Nederlands` `Polski` `Türkçe` `Bahasa Indonesia` `Svenska` `Dansk` `Suomi` `Norsk` `Čeština` `Română` `Magyar` `Ελληνικά` `עברית` `Українська` `Melayu` `Filipino` `বাংলা` `اردو` `فارسی` `Kiswahili` `தமிழ்` `తెలుగు` `मराठी` `ગુજરાતી` `ಕನ್ನಡ` `മലയാളം` `ਪੰਜਾਬੀ` `Български` `Slovenčina` `Lietuvių` `Latviešu` `Eesti` `Slovenščina` `Hrvatski` `Српски`
@@ -177,19 +332,18 @@
 
 ```
 faluber translate/
-├── manifest.json              # 擴充功能設定 (Manifest V3)
-├── background/
-│   └── service-worker.js      # API 呼叫與訊息路由
+├── manifest.json
+├── background/service-worker.js   # API 呼叫與訊息路由
 ├── content/
-│   ├── content.js             # DOM 文字擷取與替換
-│   └── content.css            # 懸浮球樣式
+│   ├── content.js                 # DOM 文字擷取與替換
+│   └── content.css                # 懸浮球樣式
 ├── popup/
-│   ├── popup.html             # 設定彈窗
-│   ├── popup.js               # 多 API 管理
-│   └── popup.css              # 彈窗樣式
-├── icons/                     # 擴充功能圖示
-├── docs/                      # 產品官網
-└── generate-icons.js          # 圖示產生器（開發工具）
+│   ├── popup.html                 # 設定彈窗
+│   ├── popup.js                   # 多 API 管理
+│   └── popup.css
+├── icons/                         # 擴充功能圖示
+├── docs/                          # 產品官網
+└── generate-icons.js              # 圖示產生器（開發工具）
 ```
 
 ---
@@ -204,10 +358,10 @@ faluber translate/
 
 <div align="center">
   <br>
-  <a href="https://github.com/hywihq-boop/faluber-translate">⭐ Star on GitHub</a> ·
+  <a href="https://github.com/hywihq-boop/faluber-translate">⭐ Star</a> ·
   <a href="https://github.com/hywihq-boop/faluber-translate/releases">📦 下載</a> ·
   <a href="https://github.com/hywihq-boop/faluber-translate/issues">🐛 回報 Bug</a> ·
-  <a href="LICENSE">📝 MIT 授權</a>
+  <a href="LICENSE">📝 MIT</a>
   <br><br>
   <sub>用 ❤️ 製作 · 不收集任何使用者資料</sub>
 </div>
