@@ -175,8 +175,10 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
 #lf-donate h3{font-size:17px;color:#e0e0e0;margin-bottom:6px}
 #lf-donate p{font-size:12px;color:#7a7a8e;margin-bottom:18px;line-height:1.6}
 #lf-donate .lf-donate-qr{display:none;margin-bottom:14px}
-#lf-donate .lf-donate-qr img{width:200px;height:200px;border-radius:10px;border:1px solid rgba(255,255,255,0.08)}
-#lf-donate .lf-donate-qr.show{display:block}
+#lf-donate .lf-donate-qr.show{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.lf-donate-qr-item{text-align:center}
+.lf-donate-qr-item img{width:160px;height:160px;border-radius:10px;border:1px solid rgba(255,255,255,0.08)}
+.lf-donate-qr-item span{display:block;font-size:10px;color:#7a7a8e;margin-top:4px}
 .lf-donate-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .lf-donate-btn{padding:8px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all 0.2s}
 .lf-donate-later{background:rgba(255,255,255,0.06);color:#7a7a8e;border:1px solid rgba(255,255,255,0.1)}
@@ -272,7 +274,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
     document.body.appendChild(wrapper);
     // 打赏弹窗
     const donateOverlay = document.createElement('div'); donateOverlay.id = 'lf-donate-overlay';
-    donateOverlay.innerHTML = '<div id="lf-donate"><h3>☕ 请作者喝杯咖啡</h3><p>已经帮你翻译了 <b id="lf-donate-count">10</b> 次啦~<br>如果觉得好用，可以赞助一点 token 吗？</p><div class="lf-donate-qr" id="lf-donate-qr"><img src="'+chrome.runtime.getURL('icons/donate-qr.png')+'" alt="付款二维码"></div><div class="lf-donate-btns"><button class="lf-donate-btn lf-donate-later" id="lf-donate-later">下次一定</button><button class="lf-donate-btn lf-donate-pay" id="lf-donate-pay">❤️ 赞助token</button></div></div>';
+    donateOverlay.innerHTML = '<div id="lf-donate"><h3>☕ 请作者喝杯咖啡</h3><p>已经帮你翻译了 <b id="lf-donate-count">10</b> 次啦~<br>如果觉得好用，可以赞助一点 token 吗？</p><div class="lf-donate-qr" id="lf-donate-qr"><div class="lf-donate-qr-item"><img src="'+chrome.runtime.getURL('icons/donate-wechat.png')+'" alt="微信"><span>微信</span></div><div class="lf-donate-qr-item"><img src="'+chrome.runtime.getURL('icons/donate-alipay.png')+'" alt="支付宝"><span>支付宝</span></div></div><div class="lf-donate-btns"><button class="lf-donate-btn lf-donate-later" id="lf-donate-later">下次一定</button><button class="lf-donate-btn lf-donate-pay" id="lf-donate-pay">❤️ 赞助token</button></div></div>';
     document.body.appendChild(donateOverlay);
     document.getElementById('lf-donate-later').addEventListener('click', () => {
       donateOverlay.classList.remove('show');
