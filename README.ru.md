@@ -6,6 +6,8 @@
 ![manifest](https://img.shields.io/badge/manifest-v3-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
+🌐 **Сайт**: [hywihq-boop.github.io/faluber-translate](https://hywihq-boop.github.io/faluber-translate/)
+
 ## ✨ Возможности
 
 - 🚀 **Перевод всей страницы в один клик** — нажмите иконку или `Alt+T`

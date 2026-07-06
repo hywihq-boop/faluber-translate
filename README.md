@@ -8,6 +8,8 @@ A Chrome browser extension that translates web pages using AI (OpenAI-compatible
 ![manifest](https://img.shields.io/badge/manifest-v3-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
+🌐 **Website**: [hywihq-boop.github.io/faluber-translate](https://hywihq-boop.github.io/faluber-translate/)
+
 ## ✨ Features
 
 - 🚀 **One-click full-page translation** — Click the icon or press `Alt+T`

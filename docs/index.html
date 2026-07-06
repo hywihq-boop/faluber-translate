@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faluber Translate — AI Web Page Translation</title>
+<meta name="description" content="Open-source Chrome extension for AI-powered web page translation. 50 languages, 10 API providers, dual translation modes.">
+<meta property="og:image" content="./logo.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+:root{--purple:#7c5cfc;--cyan:#5ce0fc;--green:#4ade80;--red:#f87171;--bg:#0a0a1a;--card:#12122a;--text:#c0c0d0;--heading:#f0f0f5;--muted:#6a6a8a}
+body{font-family:system-ui,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+/* Nav */
+.nav-bar{position:sticky;top:0;z-index:100;background:rgba(10,10,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.05);padding:0 24px;display:flex;justify-content:center;align-items:center;gap:0;flex-wrap:wrap}
+.nav-bar a{padding:12px 18px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.2s;border-bottom:2px solid transparent}
+.nav-bar a:hover,.nav-bar a.active{color:var(--purple);border-bottom-color:var(--purple)}
+.lang-switch{margin-left:auto;display:flex;gap:2px;background:rgba(255,255,255,0.04);border-radius:8px;padding:2px}
+.lang-switch button{padding:6px 12px;border:none;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;border-radius:6px;transition:all 0.2s;font-family:inherit}
+.lang-switch button.active{background:rgba(124,92,252,0.2);color:var(--purple);font-weight:600}
+
+.section-wrap{max-width:960px;margin:0 auto;padding:0 24px}
+section{padding:80px 0}
+
+/* Hero */
+#hero{padding:100px 0 80px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(124,92,252,0.15),transparent 70%)}
+.hero-logo{width:80px;height:80px;border-radius:16px;margin-bottom:24px;box-shadow:0 0 40px rgba(124,92,252,0.3)}
+#hero h1{font-size:42px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+#hero p{font-size:18px;color:var(--muted);max-width:560px;margin:0 auto 32px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.2s}
+.btn-primary{background:linear-gradient(135deg,var(--purple),#9061f9);color:#fff;box-shadow:0 4px 20px rgba(124,92,252,0.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(124,92,252,0.45)}
+.btn-outline{border:1px solid rgba(124,92,252,0.3);color:var(--purple);background:transparent}
+.btn-outline:hover{background:rgba(124,92,252,0.06)}
+.btn-ghost{border:1px solid rgba(255,255,255,0.1);color:var(--muted);background:transparent}
+.btn-ghost:hover{color:var(--heading);border-color:rgba(255,255,255,0.2)}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:rgba(92,224,252,0.08);border:1px solid rgba(92,224,252,0.15);color:var(--cyan);font-size:13px;font-weight:500;white-space:nowrap}
+.hero-badge.green{background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.15);color:var(--green)}
+
+.section-label{display:inline-block;padding:4px 12px;border-radius:99px;background:rgba(124,92,252,0.1);color:var(--purple);font-size:11px;font-weight:600;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
+h2{font-size:28px;font-weight:700;color:var(--heading);margin-bottom:12px}
+.section-desc{color:var(--muted);max-width:600px;margin-bottom:40px}
+
+/* Stats */
+.stats{display:flex;justify-content:center;gap:48px;padding:40px 0;border-top:1px solid rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:0}
+.stat{text-align:center}
+.stat-num{font-size:28px;font-weight:700;color:var(--cyan)}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Feature Grid */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.feature{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:24px;transition:border-color 0.2s}
+.feature:hover{border-color:rgba(124,92,252,0.2)}
+.feature-icon{font-size:28px;margin-bottom:12px}
+.feature h3{font-size:15px;font-weight:600;color:var(--heading);margin-bottom:8px}
+.feature p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* Browser Frame */
+.browser-frame{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);background:#14142a;box-shadow:0 16px 48px rgba(0,0,0,0.4);margin:0 auto 40px;max-width:780px}
+.browser-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#1a1a36;border-bottom:1px solid rgba(255,255,255,0.05)}
+.browser-dot{width:10px;height:10px;border-radius:50%}
+.browser-dot.r{background:#f87171}.browser-dot.y{background:#facc15}.browser-dot.g{background:#4ade80}
+.browser-url{padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.04);font-size:11px;color:var(--muted);flex:1}
+.page-content{padding:24px;position:relative;overflow:hidden;min-height:160px}
+
+/* Popup Mock */
+.popup-mock{width:320px;margin:0 auto;background:#0f0f1a;border:1px solid #2a2a48;border-radius:14px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.5)}
+.popup-header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.popup-logo{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--purple),var(--cyan))}
+.popup-title{font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.popup-section{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.popup-label{font-size:10px;color:#606078;text-transform:uppercase;margin-bottom:4px}
+.popup-input{width:100%;padding:7px 10px;background:#12122a;border:1px solid #2a2a48;border-radius:8px;color:#f0f0f5;font-size:11px;font-family:monospace;outline:none}
+.popup-select{width:100%;padding:7px 10px;background:#12122a;border:1px solid #2a2a48;border-radius:8px;color:#f0f0f5;font-size:11px;appearance:none}
+.popup-btn{padding:6px 14px;border:none;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer}
+.popup-btn.primary{background:rgba(124,92,252,0.12);color:var(--purple)}
+.popup-btn.success{background:rgba(74,222,128,0.12);color:var(--green)}
+.popup-footer{display:flex;justify-content:space-between;padding:10px 16px;font-size:10px;color:#606078}
+.popup-footer select{background:transparent;border:1px solid #2a2a48;border-radius:4px;color:#9090a8;font-size:10px;padding:2px 4px}
+.popup-footer kbd{background:#12122a;padding:1px 4px;border-radius:3px;border:1px solid #2a2a48;font-size:9px;color:#9090a8}
+
+/* Steps */
+.steps{display:flex;flex-direction:column;gap:20px;max-width:600px}
+.step{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:20px 24px}
+.step-num{width:36px;height:36px;border-radius:50%;background:rgba(124,92,252,0.12);color:var(--purple);display:grid;place-items:center;font-weight:700;font-size:15px;flex-shrink:0}
+.step h4{font-size:14px;color:var(--heading);margin-bottom:4px}
+.step p{font-size:13px;color:var(--muted)}
+
+/* Table */
+.mode-table{width:100%;border-collapse:collapse;font-size:13px}
+.mode-table th{text-align:left;padding:10px 14px;background:rgba(124,92,252,0.08);color:var(--purple);font-weight:600;border-radius:6px 6px 0 0}
+.mode-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.mode-table .hi{color:var(--green)}
+
+/* Lang */
+.lang-grid{display:flex;flex-wrap:wrap;gap:6px}
+.lang-tag{padding:3px 10px;border-radius:5px;background:rgba(255,255,255,0.03);font-size:12px;color:var(--muted)}
+
+/* Provider grid */
+.provider-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.provider-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px;text-align:center;transition:border-color 0.2s}
+.provider-card:hover{border-color:rgba(124,92,252,0.2)}
+.provider-card h4{font-size:14px;color:var(--heading);margin-bottom:4px}
+.provider-card p{font-size:11px;color:var(--muted)}
+
+/* Highlight */
+.hl{background:rgba(124,92,252,0.15);border-radius:2px;padding:0 1px}
+@keyframes highlight-pulse{0%,100%{background:rgba(124,92,252,0.15)}50%{background:rgba(124,92,252,0.3)}}
+.cursor-word{animation:highlight-pulse 1.5s ease-in-out infinite;border-radius:2px;padding:0 2px}
+
+/* Panel mock */
+.panel-mock{display:flex;gap:12px;align-items:stretch;min-height:200px}
+.panel-col{flex:1;display:flex;flex-direction:column}
+.panel-col textarea{flex:1;background:#12122a;border:1px solid #2a2a48;border-radius:8px;color:#c0c0d0;padding:12px;font-size:12px;resize:none;font-family:system-ui;outline:none;min-height:180px}
+.panel-col label{font-size:10px;color:#606078;margin-bottom:4px;text-transform:uppercase}
+.panel-divider{display:flex;align-items:center;color:var(--purple);font-size:18px}
+
+footer{padding:32px 0;text-align:center;font-size:12px;color:var(--muted);border-top:1px solid rgba(255,255,255,0.04)}
+footer a{color:var(--purple);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+
+@media(max-width:640px){#hero h1{font-size:28px}#hero p{font-size:15px}.stats{gap:24px}.stat-num{font-size:22px}.nav-bar a{padding:8px 10px;font-size:11px}.panel-mock{flex-direction:column}}
+
+[lang]{display:none}
+html[lang="zh-CN"] [lang="zh-CN"]{display:unset}
+html[lang="zh-CN"] [lang="zh-CN"].btn,[lang="zh-CN"].hero-badge,[lang="zh-CN"].stat-num,[lang="zh-CN"].stat-label{display:inline-flex}
+html[lang="zh-CN"] .stat-num[lang="zh-CN"],html[lang="zh-CN"] .stat-label[lang="zh-CN"]{display:block}
+html[lang="zh-CN"] [lang="zh-CN"].stat,[lang="zh-CN"].section-label,[lang="zh-CN"]h2,[lang="zh-CN"]h3,[lang="zh-CN"]h4,[lang="zh-CN"]p,[lang="zh-CN"]li,[lang="zh-CN"]a,[lang="zh-CN"]td,[lang="zh-CN"]th,[lang="zh-CN"]label,[lang="zh-CN"]span:not(.no-i18n){display:unset}
+html[lang="en"] [lang="en"]{display:unset}
+html[lang="en"] [lang="en"].btn,[lang="en"].hero-badge,[lang="en"].stat-num,[lang="en"].stat-label{display:inline-flex}
+html[lang="en"] .stat-num[lang="en"],html[lang="en"] .stat-label[lang="en"]{display:block}
+html[lang="en"] [lang="en"].stat,[lang="en"].section-label,[lang="en"]h2,[lang="en"]h3,[lang="en"]h4,[lang="en"]p,[lang="en"]li,[lang="en"]a,[lang="en"]td,[lang="en"]th,[lang="en"]label,[lang="en"]span:not(.no-i18n){display:unset}
+</style>
+</head>
+<body>
+
+<nav class="nav-bar">
+  <a href="#hero" class="active" data-i18n="navHome">首页</a>
+  <a href="#features" data-i18n="navFeatures">功能介绍</a>
+  <a href="#demo" data-i18n="navDemo">效果演示</a>
+  <a href="#setup" data-i18n="navSetup">安装配置</a>
+  <a href="#languages" data-i18n="navLang">语言支持</a>
+  <div class="lang-switch">
+    <button onclick="setLang('zh-CN')" id="btn-zh">中文</button>
+    <button onclick="setLang('en')" id="btn-en">EN</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="section-wrap">
+    <img src="./logo.png" alt="Faluber Translate" class="hero-logo">
+    <h1>Faluber Translate</h1>
+    <p lang="zh-CN">基于 AI 大模型的智能网页翻译插件。鼠标指向 + 单击 Ctrl 即时解释，Alt+T 一键翻译整页，支持 50 种语言，兼容 OpenAI 格式 API。</p>
+    <p lang="en">AI-powered web page translation extension. Hover + Ctrl for instant explanations, Alt+T for full-page translation. 50 languages, compatible with any OpenAI-format API.</p>
+    <div class="hero-actions">
+      <a href="https://github.com/hywihq-boop/faluber-translate/releases" class="btn btn-primary" lang="zh-CN">⬇ 下载插件</a>
+      <a href="https://github.com/hywihq-boop/faluber-translate/releases" class="btn btn-primary" lang="en">⬇ Download</a>
+      <a href="https://github.com/hywihq-boop/faluber-translate" class="btn btn-outline" target="_blank">⭐ Star on GitHub</a>
+      <a href="#demo" class="btn btn-ghost" lang="zh-CN">效果演示</a>
+      <a href="#demo" class="btn btn-ghost" lang="en">Live Demo</a>
+    </div>
+    <div class="hero-badges">
+      <span class="hero-badge">🌐 50+ <span lang="zh-CN">语言</span><span lang="en">Languages</span></span>
+      <span class="hero-badge">⚡ <span lang="zh-CN">双档模式</span><span lang="en">Dual Modes</span></span>
+      <span class="hero-badge">🔑 10 <span lang="zh-CN">家 API</span><span lang="en">API Providers</span></span>
+      <span class="hero-badge green">🔓 MIT <span lang="zh-CN">开源</span><span lang="en">Open Source</span></span>
+    </div>
+    <div class="stats" style="margin-top:48px">
+      <div class="stat"><div class="stat-num">50+</div><div class="stat-label" lang="zh-CN">支持语言</div><div class="stat-label" lang="en">Languages</div></div>
+      <div class="stat"><div class="stat-num">2</div><div class="stat-label" lang="zh-CN">翻译模式</div><div class="stat-label" lang="en">Modes</div></div>
+      <div class="stat"><div class="stat-num">8</div><div class="stat-label" lang="zh-CN">并发翻译</div><div class="stat-label" lang="en">Concurrency</div></div>
+      <div class="stat"><div class="stat-num">~1s</div><div class="stat-label" lang="zh-CN">词语解释</div><div class="stat-label" lang="en">Explain Word</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="section-wrap">
+    <div class="section-label" lang="zh-CN">核心功能</div>
+    <div class="section-label" lang="en">Core Features</div>
+    <h2 lang="zh-CN">不只是翻译</h2>
+    <h2 lang="en">More Than Translation</h2>
+    <p class="section-desc" lang="zh-CN">文本节点级 DOM 替换 + AI 大模型驱动，翻译精准不破坏页面结构。支持 50 种目标语言，20 种 UI 语言。</p>
+    <p class="section-desc" lang="en">Text-node-level DOM replacement + AI-driven translation. Accurate results without breaking page layout. 50 target languages, 20 UI languages.</p>
+    <div class="features">
+      <div class="feature"><div class="feature-icon">🌐</div><h3 lang="zh-CN">一键整页翻译</h3><h3 lang="en">One-Click Full-Page</h3><p lang="zh-CN">点击悬浮球或按 Alt+T，将整个网页翻译为目标语言。文本节点级替换，不破坏页面结构。</p><p lang="en">Click the widget or press Alt+T to translate the entire page. Text-node-level replacement preserves page structure.</p></div>
+      <div class="feature"><div class="feature-icon">🔍</div><h3 lang="zh-CN">Ctrl + 智能解释</h3><h3 lang="en">Ctrl + Explain</h3><p lang="zh-CN">鼠标指向任意词汇 + 单击 Ctrl，AI 弹出气泡解释。划词后按 Ctrl 解释整段。不修改网页文本。</p><p lang="en">Hover over any word + tap Ctrl for an AI explanation bubble. Select text + Ctrl to explain a passage. Zero DOM pollution.</p></div>
+      <div class="feature"><div class="feature-icon">⚡</div><h3 lang="zh-CN">双档翻译模式</h3><h3 lang="en">Dual Modes</h3><p lang="zh-CN">标准模式（3 并发 + 视野优先）平衡速度与消耗。极速模式（8 并发 + 全页翻译）速度拉满。</p><p lang="en">Standard mode (3 concurrent, viewport-first) balances speed & cost. Turbo mode (8 concurrent, full-page) for maximum speed.</p></div>
+      <div class="feature"><div class="feature-icon">🔑</div><h3 lang="zh-CN">多 API 管理</h3><h3 lang="en">Multi-API</h3><p lang="zh-CN">内置 10 家提供商预设，保存多个 API 配置随时切换。自动拉取可用模型，支持自定义接口。</p><p lang="en">10 built-in provider presets. Save multiple API configs and switch anytime. Auto-fetch models. Custom endpoints supported.</p></div>
+      <div class="feature"><div class="feature-icon">📋</div><h3 lang="zh-CN">翻译面板 (Alt+Q)</h3><h3 lang="en">Translation Panel</h3><p lang="zh-CN">左右布局的浮动翻译面板，输入原文即时翻译。支持任意语言对，独立于页面翻译。</p><p lang="en">Side-by-side floating panel for instant input/output translation. Works independently from page translation.</p></div>
+      <div class="feature"><div class="feature-icon">💾</div><h3 lang="zh-CN">智能缓存</h3><h3 lang="en">Smart Cache</h3><p lang="zh-CN">内存 + 持久化双层缓存，1 小时 TTL。重复内容不消耗 token。语言切换自动清除缓存。</p><p lang="en">In-memory + persistent dual-layer cache with 1-hour TTL. No duplicate token spend. Auto-clears on language change.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo -->
+<section id="demo">
+  <div class="section-wrap">
+    <div class="section-label" lang="zh-CN">效果演示</div>
+    <div class="section-label" lang="en">Live Demo</div>
+    <h2 lang="zh-CN">整页翻译 + 悬浮球</h2>
+    <h2 lang="en">Full-Page Translation</h2>
+    <p class="section-desc" lang="zh-CN">点击右下角悬浮球的「翻译」按钮，或按 Alt+T，整页文本瞬间翻译。鼠标悬停已翻译文本会高亮显示原文。</p>
+    <p class="section-desc" lang="en">Click "Translate" on the floating widget or press Alt+T. Hover over translated text to see the original.</p>
+    <div class="browser-frame">
+      <div class="browser-bar"><div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div><div class="browser-url">wikipedia.org — Artificial Intelligence</div></div>
+      <div class="page-content">
+        <h2 style="font-size:20px;color:var(--heading);margin-bottom:12px">Artificial Intelligence</h2>
+        <p style="color:#9090a8;font-size:13px;margin-bottom:10px"><span class="hl">人工智能</span>（AI）是机器展示的智能。领先的 AI 教科书将这一领域定义为<span class="hl">"智能代理"</span>的研究：任何能够感知其环境并采取行动以最大化实现其目标机会的系统。</p>
+        <p style="color:#9090a8;font-size:13px;margin-bottom:10px">AI 应用包括<span class="hl">高级搜索引擎</span>、<span class="hl">推荐系统</span>、<span class="hl">语音识别</span>、<span class="hl">自动驾驶</span>、<span class="hl">生成式 AI</span>（如 ChatGPT），以及<span class="hl">战略游戏</span>中的超人类表现。</p>
+        <h3 style="font-size:16px;color:#e0e0e0;margin:16px 0 8px">History</h3>
+        <p style="color:#9090a8;font-size:13px"><span class="hl">人造生命</span>的概念早在古希腊神话中就已出现。这些故事预示了后来关于 AI 及其局限性的讨论。</p>
+        <div style="position:absolute;bottom:12px;right:12px;width:260px">
+          <div style="border-radius:18px;overflow:hidden;background:rgba(15,15,26,0.94);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);box-shadow:0 8px 32px rgba(0,0,0,0.45)">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;min-height:48px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:#7a7a8e">Auto</span><span style="width:32px;height:18px;border-radius:99px;background:#7c5cfc;position:relative;display:inline-block"><span style="position:absolute;top:2.5px;right:2.5px;width:13px;height:13px;border-radius:50%;background:#fff;display:block"></span></span></div>
+              <div style="display:flex;align-items:center;gap:3px"><span style="height:26px;padding:0 14px;border-radius:13px;background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2);font-size:11px;font-weight:600;display:flex;align-items:center">Translated</span></div>
+            </div>
+            <div style="padding:4px 13px 5px;background:rgba(0,0,0,0.12);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#7a7a8e">
+              <span>Tokens <span style="color:#7c5cfc;font-weight:600">2.5K</span></span><span style="color:#4ade80">Cache Hit 42%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top:64px" lang="zh-CN">Ctrl + 智能解释</h2>
+    <h2 style="margin-top:64px" lang="en">Ctrl + Explain</h2>
+    <p class="section-desc" lang="zh-CN">鼠标悬停在词汇上 + 单击 Ctrl 键，AI 弹出气泡解释。不修改网页文本，零 DOM 污染。</p>
+    <p class="section-desc" lang="en">Hover over a word + tap Ctrl for an AI-powered explanation bubble. No DOM modification.</p>
+    <div class="browser-frame">
+      <div class="browser-bar"><div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div><div class="browser-url">github.com — Trending</div></div>
+      <div class="page-content" style="position:relative;min-height:200px">
+        <h3 style="font-size:16px;color:#e0e0e0;margin-bottom:12px">Trending today</h3>
+        <p style="margin-bottom:6px;font-size:14px"><a href="#" style="color:#7c5cfc">usestrix</a> / <span class="cursor-word">strix</span></p>
+        <p style="font-size:11px;color:#9090a8;margin-bottom:14px">An agentic skills framework & software development methodology.</p>
+        <p style="margin-bottom:6px;font-size:14px"><a href="#" style="color:#7c5cfc">actions</a> / <span class="cursor-word">checkout</span></p>
+        <p style="font-size:11px;color:#9090a8;margin-bottom:14px">Action for checking out a repo</p>
+        <p style="margin-bottom:6px;font-size:14px"><a href="#" style="color:#7c5cfc">affaan-m</a> / <span class="cursor-word">ECC</span></p>
+        <p style="font-size:11px;color:#9090a8">The agent harness performance optimization system.</p>
+        <div style="position:absolute;top:4px;right:20px;max-width:280px;background:rgba(18,16,36,0.96);backdrop-filter:blur(16px);border:1px solid rgba(124,92,252,0.22);border-radius:12px;padding:10px 13px;font-size:12px;line-height:1.6;color:#c0c0d0;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:10">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span style="font-weight:600;color:#9061f9;font-size:13px">strix</span><span style="color:#7a7a8e;font-size:13px">✕</span></div>
+          <div style="font-size:11px">"Strix" is Latin for "owl", also the name of ASUS's premium gaming brand ROG Strix. On GitHub, it's commonly used as a project or organization name.</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top:64px" lang="zh-CN">翻译面板 (Alt+Q)</h2>
+    <h2 style="margin-top:64px" lang="en">Translation Panel (Alt+Q)</h2>
+    <p class="section-desc" lang="zh-CN">浮动翻译面板，左侧输入原文、右侧输出译文。支持任意语言对，实时翻译，独立于页面。</p>
+    <p class="section-desc" lang="en">Floating translation panel with side-by-side input/output. Any language pair, real-time translation, independent from page.</p>
+    <div class="browser-frame">
+      <div class="browser-bar"><div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div><div class="browser-url">Faluber Translate — Panel Mode</div></div>
+      <div class="page-content">
+        <div class="panel-mock">
+          <div class="panel-col"><label>Input — English</label><textarea readonly>Artificial intelligence is transforming how we interact with technology. From voice assistants to self-driving cars, AI applications are becoming ubiquitous in our daily lives.</textarea></div>
+          <div class="panel-divider">→</div>
+          <div class="panel-col"><label>Output — 简体中文</label><textarea readonly style="color:#4ade80">人工智能正在改变我们与技术互动的方式。从语音助手到自动驾驶汽车，AI 应用在我们的日常生活中变得越来越无处不在。</textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top:64px" lang="zh-CN">翻译模式切换</h2>
+    <h2 style="margin-top:64px" lang="en">Mode Switching</h2>
+    <p class="section-desc" lang="zh-CN">展开悬浮球详情面板，随时切换翻译模式、源语言和目标语言。</p>
+    <p class="section-desc" lang="en">Expand the widget detail panel to switch modes, source language, and target language anytime.</p>
+    <div class="browser-frame">
+      <div class="browser-bar"><div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div><div class="browser-url" lang="zh-CN">详情面板展开状态</div><div class="browser-url" lang="en">Detail panel expanded</div></div>
+      <div class="page-content" style="display:flex;justify-content:center;padding:30px">
+        <div style="width:260px;background:rgba(15,15,26,0.96);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:14px;font-size:11px;box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="font-weight:600;color:#e0e0e0;font-size:12px">Settings</span><span style="background:rgba(248,113,133,0.1);color:#f87171;border-radius:6px;padding:3px 8px;font-size:10px">Clear Cache</span></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#7a7a8e;margin-bottom:3px">Language</div><div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 6px;color:#c0c0d0;font-size:11px">🇨🇳 简体中文 ▾</div></div>
+          <div style="display:flex;gap:6px;margin-bottom:12px"><div style="flex:1"><div style="font-size:10px;color:#7a7a8e;margin-bottom:3px">Source</div><div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 6px;color:#c0c0d0;font-size:11px">Auto Detect ▾</div></div><div style="flex:1"><div style="font-size:10px;color:#7a7a8e;margin-bottom:3px">Target</div><div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 6px;color:#c0c0d0;font-size:11px">简体中文 ▾</div></div></div>
+          <div style="margin-bottom:12px"><div style="font-size:10px;color:#7a7a8e;margin-bottom:3px">Mode</div>
+            <div style="position:relative"><div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 6px;color:#c0c0d0;font-size:11px">⚡ Standard <span style="opacity:0.5">▾</span></div>
+              <div style="position:absolute;top:100%;left:0;right:0;margin-top:2px;background:#141428;border:1px solid rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;z-index:10"><div style="padding:6px 8px;font-size:11px;color:#9061f9;font-weight:600;background:rgba(124,92,252,0.08)">⚡ Standard</div><div style="padding:6px 8px;font-size:11px;color:#c0c0d0">🚀 Turbo</div></div></div></div>
+          <div style="height:1px;background:rgba(255,255,255,0.06);margin:12px 0"></div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:4px 20px;font-size:10px">
+            <span style="color:#7a7a8e">Input</span><span style="color:#e0e0e0;text-align:right">12.5K</span>
+            <span style="color:#7a7a8e">Output</span><span style="color:#e0e0e0;text-align:right">3.2K</span>
+            <span style="color:#7a7a8e">Total</span><span style="color:#e0e0e0;text-align:right">15.7K</span>
+            <span style="color:#7a7a8e">Est. Cost</span><span style="color:#e0e0e0;text-align:right">¥0.0189</span>
+            <span style="color:#7a7a8e">Cache</span><span style="color:#e0e0e0;text-align:right">142</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Setup -->
+<section id="setup">
+  <div class="section-wrap">
+    <div class="section-label" lang="zh-CN">安装配置</div>
+    <div class="section-label" lang="en">Setup</div>
+    <h2 lang="zh-CN">三步开始使用</h2>
+    <h2 lang="en">Get Started in 3 Steps</h2>
+    <p class="section-desc" style="margin-bottom:32px" lang="zh-CN">下载 → 配置 API → 开始翻译</p>
+    <p class="section-desc" style="margin-bottom:32px" lang="en">Download → Configure API → Translate</p>
+    <div class="steps" style="margin-bottom:48px">
+      <div class="step"><div class="step-num">1</div><div><h4 lang="zh-CN">下载并安装</h4><h4 lang="en">Download & Install</h4><p lang="zh-CN">从 GitHub Releases 下载 zip，解压后打开 chrome://extensions，开启开发者模式，加载已解压的扩展程序。</p><p lang="en">Download the zip from GitHub Releases, unzip, open chrome://extensions, enable Developer mode, and load unpacked.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div><h4 lang="zh-CN">配置 API</h4><h4 lang="en">Configure API</h4><p lang="zh-CN">点击插件图标，选择提供商（支持 DeepSeek、OpenAI、Groq 等 10 家），填入 API Key，测试连接。</p><p lang="en">Click the extension icon, choose a provider (10 presets: DeepSeek, OpenAI, Groq, etc.), enter your API key, and test the connection.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div><h4 lang="zh-CN">开始翻译</h4><h4 lang="en">Start Translating</h4><p lang="zh-CN">打开任意网页，点击悬浮球翻译整页。鼠标指向词汇 + 单击 Ctrl 即刻弹出解释气泡。按 Alt+Q 打开翻译面板。</p><p lang="en">Open any webpage, click the widget to translate. Hover over a word + tap Ctrl for instant explanation. Press Alt+Q for the translation panel.</p></div></div>
+    </div>
+
+    <h2 style="margin-top:64px" lang="zh-CN">API 设置面板</h2>
+    <h2 style="margin-top:64px" lang="en">API Settings Panel</h2>
+    <p class="section-desc" lang="zh-CN">管理多个 API、切换提供商、自动拉取可用模型、测试连接。</p>
+    <p class="section-desc" lang="en">Manage multiple APIs, switch providers, auto-fetch models, test connections.</p>
+    <div class="popup-mock">
+      <div class="popup-header"><div class="popup-logo"></div><span class="popup-title">Faluber Translate</span></div>
+      <div class="popup-section">
+        <div class="popup-label">API Settings</div>
+        <div style="display:flex;gap:4px;margin-bottom:8px"><select class="popup-select" style="flex:1"><option>Default</option></select><button class="popup-btn primary" style="padding:4px 8px">＋</button></div>
+        <div class="popup-label" style="margin-top:6px">Name</div><input class="popup-input" value="My DeepSeek" style="margin-bottom:6px">
+        <div class="popup-label">Provider</div><select class="popup-select" style="margin-bottom:6px"><option>DeepSeek</option></select>
+        <div class="popup-label">API Key</div><input class="popup-input" type="password" value="sk-••••••••••••••••••" style="margin-bottom:6px">
+        <div class="popup-label">API URL</div><input class="popup-input" value="https://api.deepseek.com/v1" style="margin-bottom:6px">
+        <div class="popup-label">Model</div><div style="display:flex;gap:4px"><select class="popup-select" style="flex:1"><option>deepseek-chat</option><option>deepseek-reasoner</option></select><button class="popup-btn primary" style="padding:4px 8px">🔄</button></div>
+        <div style="display:flex;gap:8px;margin-top:10px"><button class="popup-btn primary">Test Connection</button><button class="popup-btn success">💾 Save</button><span style="font-size:10px;color:#4ade80">✅ Connected</span></div>
+      </div>
+      <div class="popup-footer"><span>Shortcut <kbd>Alt+T</kbd></span><span>🌐 <select style="background:transparent;border:1px solid #2a2a48;border-radius:4px;color:#9090a8;font-size:10px;padding:2px 4px"><option>简体中文</option></select></span></div>
+    </div>
+
+    <h2 style="margin-top:64px" lang="zh-CN">兼容主流大模型 API</h2>
+    <h2 style="margin-top:64px" lang="en">Compatible APIs</h2>
+    <p class="section-desc" style="margin-bottom:32px" lang="zh-CN">OpenAI 兼容格式均可使用，内置 10 家提供商预设，支持自定义接口。</p>
+    <p class="section-desc" style="margin-bottom:32px" lang="en">Any OpenAI-compatible API works. 10 built-in presets, custom endpoints supported.</p>
+    <div class="provider-grid">
+      <div class="provider-card"><h4>⭐ DeepSeek</h4><p lang="zh-CN">高性价比首选</p><p lang="en">Best value</p></div>
+      <div class="provider-card"><h4>OpenAI</h4><p>GPT-4o / GPT-4 Turbo</p></div>
+      <div class="provider-card"><h4>Groq</h4><p lang="zh-CN">超低延迟</p><p lang="en">Ultra-low latency</p></div>
+      <div class="provider-card"><h4>Together AI</h4><p lang="zh-CN">开源模型托管</p><p lang="en">Open model hosting</p></div>
+      <div class="provider-card"><h4>OpenRouter</h4><p lang="zh-CN">统一 API 网关</p><p lang="en">Unified API gateway</p></div>
+      <div class="provider-card"><h4>SiliconFlow</h4><p lang="zh-CN">国产模型</p><p lang="en">Chinese models</p></div>
+      <div class="provider-card"><h4>Moonshot</h4><p>Kimi / Moonshot</p></div>
+      <div class="provider-card"><h4>Zhipu</h4><p>GLM-4</p></div>
+      <div class="provider-card"><h4>DashScope</h4><p>Qwen / 通义千问</p></div>
+      <div class="provider-card"><h4>Custom</h4><p lang="zh-CN">任意兼容 API</p><p lang="en">Any compatible API</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Languages -->
+<section id="languages">
+  <div class="section-wrap">
+    <div class="section-label" lang="zh-CN">语言支持</div>
+    <div class="section-label" lang="en">Languages</div>
+    <h2 lang="zh-CN">50 种目标语言</h2>
+    <h2 lang="en">50 Target Languages</h2>
+    <p class="section-desc" lang="zh-CN">提示词按目标语言本地化发送，零跨语言 token 浪费。界面支持 20 种语言。</p>
+    <p class="section-desc" lang="en">Prompts are localized per target language — zero cross-language token waste. 20 UI languages.</p>
+    <div class="lang-grid" style="margin-bottom:48px">
+      <span class="lang-tag">简体中文</span><span class="lang-tag">繁體中文</span><span class="lang-tag">English</span><span class="lang-tag">日本語</span><span class="lang-tag">한국어</span><span class="lang-tag">Français</span><span class="lang-tag">Deutsch</span><span class="lang-tag">Español</span><span class="lang-tag">Português</span><span class="lang-tag">Русский</span><span class="lang-tag">العربية</span><span class="lang-tag">हिन्दी</span><span class="lang-tag">ไทย</span><span class="lang-tag">Tiếng Việt</span><span class="lang-tag">Italiano</span><span class="lang-tag">Nederlands</span><span class="lang-tag">Polski</span><span class="lang-tag">Türkçe</span><span class="lang-tag">Indonesia</span><span class="lang-tag">Svenska</span><span class="lang-tag">Dansk</span><span class="lang-tag">Suomi</span><span class="lang-tag">Norsk</span><span class="lang-tag">Čeština</span><span class="lang-tag">Română</span><span class="lang-tag">Magyar</span><span class="lang-tag">Ελληνικά</span><span class="lang-tag">עברית</span><span class="lang-tag">Українська</span><span class="lang-tag">Melayu</span><span class="lang-tag">Filipino</span><span class="lang-tag">বাংলা</span><span class="lang-tag">اردو</span><span class="lang-tag">فارسی</span><span class="lang-tag">Kiswahili</span><span class="lang-tag">தமிழ்</span><span class="lang-tag">తెలుగు</span><span class="lang-tag">मराठी</span><span class="lang-tag">ગુજરાતી</span><span class="lang-tag">ಕನ್ನಡ</span><span class="lang-tag">മലയാളം</span><span class="lang-tag">ਪੰਜਾਬੀ</span><span class="lang-tag">Български</span><span class="lang-tag">Slovenčina</span><span class="lang-tag">Lietuvių</span><span class="lang-tag">Latviešu</span><span class="lang-tag">Eesti</span><span class="lang-tag">Slovenščina</span><span class="lang-tag">Hrvatski</span><span class="lang-tag">Српски</span>
+    </div>
+
+    <h2 lang="zh-CN">翻译模式对比</h2>
+    <h2 lang="en">Mode Comparison</h2>
+    <div style="max-width:600px">
+      <table class="mode-table">
+        <tr><th lang="zh-CN">参数</th><th lang="en">Parameter</th><th lang="zh-CN">标准模式</th><th lang="en">Standard</th><th class="hi" lang="zh-CN">极速模式</th><th class="hi" lang="en">Turbo</th></tr>
+        <tr><td lang="zh-CN">并发数</td><td lang="en">Concurrency</td><td>3</td><td class="hi">8</td></tr>
+        <tr><td lang="zh-CN">翻译范围</td><td lang="en">Scope</td><td lang="zh-CN">视口优先</td><td lang="en">Viewport-first</td><td class="hi" lang="zh-CN">全页翻译</td><td class="hi" lang="en">Full-page</td></tr>
+        <tr><td lang="zh-CN">滚动翻译</td><td lang="en">Scroll detect</td><td>✅</td><td class="hi">—</td></tr>
+        <tr><td lang="zh-CN">动态内容监听</td><td lang="en">Dynamic content</td><td>✅</td><td class="hi">✅</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="section-wrap">
+    <div class="footer-links">
+      <a href="https://github.com/hywihq-boop/faluber-translate" target="_blank">GitHub</a>
+      <a href="https://github.com/hywihq-boop/faluber-translate/blob/main/LICENSE" target="_blank">MIT License</a>
+      <a href="https://github.com/hywihq-boop/faluber-translate/releases" target="_blank">Releases</a>
+      <a href="https://github.com/hywihq-boop/faluber-translate/issues" target="_blank">Issues</a>
+    </div>
+    <p>Faluber Translate v2.0 · Manifest V3 · Open Source · <span lang="zh-CN">不收集任何用户数据</span><span lang="en">No user data collected</span></p>
+  </div>
+</footer>
+
+<script>
+// Language switching
+function setLang(lang) {
+  document.documentElement.lang = lang;
+  document.getElementById('btn-zh').classList.toggle('active', lang === 'zh-CN');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  localStorage.setItem('lf-site-lang', lang);
+}
+
+// Init
+const saved = localStorage.getItem('lf-site-lang') || 'zh-CN';
+setLang(saved);
+
+// Active nav on scroll
+const sections = document.querySelectorAll('section[id]');
+const navs = document.querySelectorAll('.nav-bar a:not(.lang-switch *)');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  navs.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+});
+</script>
+</body>
+</html>

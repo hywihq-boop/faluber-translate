@@ -6,6 +6,8 @@ AI（DeepSeek、OpenAI、Qwen などの OpenAI 互換 API）を使用した Chro
 ![manifest](https://img.shields.io/badge/manifest-v3-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
+🌐 **ウェブサイト**: [hywihq-boop.github.io/faluber-translate](https://hywihq-boop.github.io/faluber-translate/)
+
 ## ✨ 機能
 
 - 🚀 **ワンクリック全ページ翻訳** — アイコンをクリックするか `Alt+T` を押す
