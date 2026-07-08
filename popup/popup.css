@@ -1,4 +1,4 @@
-/* LinguaFlow Popup */
+/* Faluber Translate Popup */
 :root {
   --bg: #0f0f1a; --card: #1c1c38; --input: #12122a; --border: #2a2a48;
   --accent: #7c5cfc; --cyan: #5ce0fc; --text: #f0f0f5; --text2: #9090a8; --text3: #606078;
@@ -87,8 +87,14 @@ select{
 .token-bar{padding:6px 4px; font-size:10px; color:var(--text2); text-align:center}
 
 /* Footer */
-.footer{display:flex; justify-content:space-between; font-size:10px; color:var(--text3)}
+.footer{display:flex; justify-content:space-between; align-items:center; font-size:10px; color:var(--text3);flex-wrap:wrap;gap:4px}
 .footer kbd{padding:1px 4px; background:var(--input); border:1px solid var(--border); border-radius:3px; font-size:9px; color:var(--text2)}
+#update-status{font-size:11px;margin-left:4px;padding:3px 8px;border-radius:4px;transition:all 0.2s;white-space:nowrap;line-height:1.4}
+#update-status.checking{color:var(--accent);background:rgba(124,92,252,0.1)}
+#update-status.uptodate{color:var(--green)}
+#update-status.hasupdate{color:#fff;background:rgba(92,224,252,0.18);cursor:pointer;animation:pulse 1.5s ease infinite;font-weight:600}
+#update-status.error{color:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
 
 /* Scrollbar */
 ::-webkit-scrollbar{width:4px}

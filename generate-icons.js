@@ -1,5 +1,5 @@
 /**
- * 图标生成器 — 为 LinguaFlow 生成简单但好看的 PNG 图标
+ * Icon generator — generates simple PNG icons for Faluber Translate
  * 纯 Node.js，无外部依赖
  */
 

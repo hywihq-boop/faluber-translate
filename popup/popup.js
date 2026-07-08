@@ -1,5 +1,5 @@
 /**
- * LinguaFlow Popup — 多 API 管理 + 提供商预设 + 模型拉取 + 并发选项
+ * Faluber Translate Popup — Multi-API management + provider presets + model fetching + concurrency options
  */
 const $ = s => document.querySelector(s);
 
@@ -359,8 +359,71 @@ async function saveCurrentApiSilent() {
   // 填充 UI
   refreshUI();
 
-  // 显示版本号
-  fetch('../manifest.json').then(r=>r.json()).then(m=>{ const el=document.getElementById('popup-version'); if(el) el.textContent=m.version; }).catch(()=>{});
+  // 显示版本号 + 检查更新
+  let currentVersion = '';
+  fetch('../manifest.json').then(r=>r.json()).then(m=>{
+    currentVersion = m.version;
+    const el = document.getElementById('popup-version');
+    if(el) el.textContent = currentVersion;
+    checkUpdate(currentVersion);
+  }).catch(()=>{});
+
+  async function checkUpdate(ver) {
+    const status = document.getElementById('update-status');
+    if (!status || !ver) return;
+    // 读取上次检查缓存
+    const cache = await chrome.storage.local.get('lf_update_cache');
+    const now = Date.now();
+    const cached = cache.lf_update_cache;
+    // 5 分钟内不重复查
+    if (cached && (now - cached.time < 300000)) {
+      showUpdateStatus(status, cached.status, cached.latest);
+      return;
+    }
+    status.style.display = 'inline-block';
+    status.className = 'checking';
+    status.textContent = '⏳';
+    try {
+      const resp = await fetch('https://api.github.com/repos/hywihq-boop/faluber-translate/releases/latest');
+      if (!resp.ok) throw new Error('API error');
+      const data = await resp.json();
+      const latest = data.tag_name.replace(/^v/, '');
+      const result = { time: now, status: 'uptodate', latest };
+      if (compareVersions(latest, ver) > 0) {
+        result.status = 'hasupdate';
+      }
+      await chrome.storage.local.set({ lf_update_cache: result });
+      showUpdateStatus(status, result.status, latest);
+    } catch(e) {
+      if (cached) { showUpdateStatus(status, cached.status, cached.latest); return; }
+      status.className = 'error';
+      status.textContent = '⚠️';
+      status.title = '检查失败';
+    }
+  }
+
+  function showUpdateStatus(el, s, latest) {
+    el.style.display = 'inline-block';
+    if (s === 'uptodate') {
+      el.className = 'uptodate';
+      el.textContent = '✓';
+      el.title = '已是最新版本';
+    } else if (s === 'hasupdate') {
+      el.className = 'hasupdate';
+      el.textContent = '🆕 v' + latest;
+      el.title = '有新版本! 点击下载';
+      el.onclick = () => chrome.tabs.create({ url: 'https://github.com/hywihq-boop/faluber-translate/releases/latest' });
+    }
+  }
+
+  function compareVersions(a, b) {
+    const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+      if ((pa[i]||0) > (pb[i]||0)) return 1;
+      if ((pa[i]||0) < (pb[i]||0)) return -1;
+    }
+    return 0;
+  }
 
   // 绑定事件
   bindEvents();

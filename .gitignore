@@ -1,3 +1,16 @@
-88c1a79e-*.png
-context-backup.md
-icons/logo.ai
+# Build output
+*.zip
+
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Puppeteer cache
+.cache/
