@@ -14,3 +14,4 @@ Thumbs.db
 
 # Puppeteer cache
 .cache/
+faluber-key.pem
