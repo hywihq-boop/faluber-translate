@@ -47,6 +47,8 @@
     if (document.getElementById('lf-styles')) return;
     const s = document.createElement('style'); s.id = 'lf-styles';
     s.textContent = `:root{--lf-purple:#7c5cfc;--lf-purple-soft:#9061f9;--lf-cyan:#5ce0fc;--lf-green:#4ade80;--lf-red:#f87171;--lf-yellow:#facc15;--lf-bg:rgba(15,15,26,0.94);--lf-border:rgba(255,255,255,0.08);--lf-text:#c0c0d0;--lf-text-strong:#e0e0e0;--lf-text-weak:#7a7a8e}
+#lf-wrapper,#lf-wrapper *{box-sizing:border-box}
+#lf-wrapper button{font-family:inherit;font-size:inherit;line-height:1.2;letter-spacing:normal;text-transform:none;text-indent:0;text-shadow:none;margin:0;overflow:visible;text-align:center;padding:0;border-radius:0;min-width:0;min-height:0;position:static;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;color:inherit}
 #lf-wrapper{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:260px;font-family:system-ui;user-select:none;pointer-events:none;transition:width 0.45s cubic-bezier(0.22,0,0,1);overflow:visible}
 #lf-wrapper.lf-fullscreen-hidden{display:none!important}
 #lf-wrapper.collapsed{width:56px}
