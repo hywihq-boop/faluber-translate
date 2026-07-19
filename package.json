@@ -1,4 +1,8 @@
 {
+  "name": "faluber-ai-translate",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Faluber AI翻译 — Chrome/Edge browser AI translation extension",
   "dependencies": {
     "puppeteer": "^25.3.0"
   }
