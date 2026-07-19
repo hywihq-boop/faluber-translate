@@ -6,10 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Faluber AI翻译** — Chrome/Edge 浏览器 AI 翻译插件（Manifest V3），基于 OpenAI 兼容 API（DeepSeek 等），文本节点级别 DOM 替换实现页面翻译。支持 50 种目标语言、20 种 UI 语言、10 家内置 API 提供商。
 
-- 仓库: `hywihq-boop/faluber-ai-translate`
-- 扩展 ID: `mdiodonkindbjkehkmoheglkedodkofa`（通过 `manifest.json` 中 `key` 字段固化）
+- 仓库: `hywihq-boop/faluber-ai-translate`（全小写）
 - GitHub Pages: `https://hywihq-boop.github.io/faluber-ai-translate/`
-- 私钥: `faluber-key.pem`（CRX 打包用，已加入 `.gitignore`）
+- 扩展语言: `default_locale: "zh_CN"`，manifest 使用 `__MSG_*__` 占位符，字符串定义在 `_locales/zh_CN/messages.json`
+- `manifest.json` 不含 `key` 字段（Edge 商店不允许，会自动分配 ID）
 
 ## 架构 — 三个运行时
 
@@ -61,16 +61,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | 快捷键 | 功能 | 实现方式 |
 |--------|------|----------|
-| `Alt+T` | 翻译/还原当前页面 | `chrome.commands` → SW `onCommand` → `sendMessage` |
+| `Alt+T` | 翻译/还原当前页面 | `chrome.commands` → SW `onCommand` → `sendMessage` 发 `START_TRANSLATION`。content.js 的 handler 实现了三段切换：翻译中→中止，已翻译→还原，其他→开始翻译 |
 | `Alt+Q` | 打开翻译面板 | **主**: content.js 直接 keydown 监听（`e.altKey && e.code === 'KeyQ'`，`e.preventDefault()`）**辅**: `chrome.commands` → SW `TOGGLE_PANEL` 消息（用于 `chrome://extensions/shortcuts` 自定义快捷键） |
-| `Ctrl`（单击） | 智能解释气泡 | content.js keydown 监听 `Control`/`Meta`，250ms 防抖后检测光标位置/划词 → `handleExplainPoint()` |
+| `Ctrl`（按下） | 智能解释气泡 | content.js keydown 监听 `Control`/`Meta`，250ms 防抖后检测鼠标位置/划词 → `handleExplainPoint()` |
 | `Esc` | 取消翻译/关闭气泡/关闭面板 | content.js keydown 监听 |
 
 `togglePanel()` 有 300ms debounce（`_lastToggle`）防止 keydown 和 SW 消息双重触发。
 
 ## Ctrl 解释 — 浮动气泡
 
-**触发**: 鼠标指向词汇 + 单击 Ctrl（不用按住）；或划词选中 + 按 Ctrl
+**触发**: 鼠标指向词汇 + 按下 Ctrl；或划词选中 + 按 Ctrl。不用按住，按下即触发。
 
 **流程**: 光标定位 → 提取光标处单词 + 周围 80 字符上下文 + 父元素 HTML → `chrome.runtime.sendMessage({type:'EXPLAIN_WORD'})` → SW 两层递进:
 1. 自然语言 prompt（含 domain + 上下文）→ `max_tokens:1000, reasoning_effort:low`
@@ -100,6 +100,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SW 中 `LANG_MAP` 和 `PROMPT` 两个全局对象覆盖 50 种语言。`PROMPT` 按目标语言提供本地化提示词模板（`main` + `html` 兜底）。`buildPrompt()` 根据 `targetLang` 选择模板，未适配语言用英文模板 + 追加 `Answer in <LANG>.`。
 
+## CSS 隔离
+
+悬浮球 CSS 通过 `<style id="lf-styles">` 注入页面。以下元素的形状关键属性使用了 `!important` 防止宿主页面 CSS 覆盖：
+
+| 元素 | 保护属性 |
+|------|----------|
+| `.lf-collapse-btn` | width/height/border-radius/padding/min-width/min-height/display |
+| `.lf-mini` | width/height/border-radius |
+| `.lf-toggle` | width/height/min-width/max-width/min-height/max-height/padding |
+| `.lf-pill-btn` | height/width/min-width/max-width/padding/display/flex-shrink |
+| `.lf-chevron` | width/height/min-width/max-width/display/padding/flex-shrink |
+
+**不要加 `box-sizing: border-box !important` 到 `#lf-wrapper *`**，会导致按钮被宿主页面样式拉伸。只精准保护容易变形的元素。
+
 ## 错误处理
 
 - 翻译错误 → 悬浮球顶部红色错误条（`#lf-error-bar`），可手动关闭
@@ -115,9 +129,9 @@ SW 中 `LANG_MAP` 和 `PROMPT` 两个全局对象覆盖 50 种语言。`PROMPT` 
 
 ## 打包
 
-用 Node.js 创建 zip（UTF-8 + forward slash 路径）:
+用 Node.js 创建 zip（UTF-8 + forward slash 路径），**不要用 PowerShell Compress-Archive**（路径用反斜杠会导致加载失败）:
 
-```javascript
+```bash
 node -e "
 const fs = require('fs');
 function createZip(files, outputPath) {
@@ -164,6 +178,7 @@ function createZip(files, outputPath) {
 }
 const files = [
   ['manifest.json', 'manifest.json'],
+  ['_locales/zh_CN/messages.json', '_locales/zh_CN/messages.json'],
   ['background/service-worker.js', 'background/service-worker.js'],
   ['content/content.js', 'content/content.js'],
   ['content/content.css', 'content/content.css'],
@@ -180,7 +195,7 @@ console.log('Done:', files.length, 'files');
 "
 ```
 
-输出 `faluber-ai-translate-vX.X.X.zip`，解压后 `chrome://extensions` → 加载已解压的扩展程序。**不要用 PowerShell Compress-Archive**（路径用反斜杠会导致加载失败）。
+输出 `faluber-ai-translate-vX.X.X.zip`。Edge 商店需要额外注意：`manifest.json` 不能含 `key` 字段，`_locales/zh_CN/messages.json` 必须打包进去。
 
 发布 Release：
 ```bash
@@ -196,3 +211,11 @@ gh release create vX.X.X faluber-ai-translate-vX.X.X.zip --title "vX.X.X — 简
 - **查看内容脚本日志**（F12 → Console → 筛选 `[LF` 或 `Faluber`）
 - **查看 Service Worker 日志**: `chrome://extensions` → Faluber AI翻译 → Service Worker 链接
 - **查看快捷键注册状态**: `chrome://extensions/shortcuts`
+
+## 已移除的功能
+
+以下功能已删除，不要再尝试修复或恢复：
+- **打赏功能**（捐赠弹窗、二维码、计数逻辑）
+- **费用估算**（`estimateCost()` 函数，价格表不准确）
+- **GitHub 更新检测**（`checkForUpdate()`、`compareVersions()`、`checkWidgetUpdate()`、`alarms` 权限 — Edge 商店自动更新）
+- **`content_remote.js`**（未使用的重复文件）
