@@ -168,23 +168,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
 .lf-panel-swap{display:flex;align-items:center;justify-content:center;align-self:center;width:36px;height:36px;border-radius:50%;background:rgba(124,92,252,0.12);border:1px solid rgba(124,92,252,0.2);color:var(--lf-purple-soft);cursor:pointer;font-size:18px;flex-shrink:0;margin:0 -18px;z-index:2;transition:all 0.2s}
 .lf-panel-swap:hover{background:rgba(124,92,252,0.2);border-color:rgba(124,92,252,0.35);transform:rotate(180deg)}
 .lf-panel-char-count{font-size:11px;color:var(--lf-text-weak)}
-@media(max-width:980px){#lf-panel{width:calc(100vw-20px);transform:none;top:20px;left:10px;right:auto}.lf-panel-body{min-height:260px}.lf-panel-text{min-height:200px}}
-#lf-donate-overlay{position:fixed;inset:0;z-index:2147483647;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease}
-#lf-donate-overlay.show{opacity:1;pointer-events:auto}
-#lf-donate{background:rgba(18,16,36,0.97);border:1px solid rgba(124,92,252,0.25);border-radius:18px;padding:24px 28px;text-align:center;max-width:360px;width:90%;box-shadow:0 12px 48px rgba(0,0,0,0.55);color:#c0c0d0;font-family:system-ui}
-#lf-donate h3{font-size:17px;color:#e0e0e0;margin-bottom:6px}
-#lf-donate p{font-size:12px;color:#7a7a8e;margin-bottom:18px;line-height:1.6}
-#lf-donate .lf-donate-qr{display:none;margin-bottom:14px}
-#lf-donate .lf-donate-qr.show{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.lf-donate-qr-item{text-align:center}
-.lf-donate-qr-item img{width:160px;height:160px;border-radius:10px;border:1px solid rgba(255,255,255,0.08)}
-.lf-donate-qr-item span{display:block;font-size:10px;color:#7a7a8e;margin-top:4px}
-.lf-donate-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.lf-donate-btn{padding:8px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all 0.2s}
-.lf-donate-later{background:rgba(255,255,255,0.06);color:#7a7a8e;border:1px solid rgba(255,255,255,0.1)}
-.lf-donate-later:hover{background:rgba(255,255,255,0.1);color:#c0c0d0}
-.lf-donate-pay{background:linear-gradient(135deg,#7c5cfc,#9061f9);color:#fff;box-shadow:0 2px 12px rgba(124,92,252,0.35)}
-.lf-donate-pay:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,92,252,0.5)}`;
+@media(max-width:980px){#lf-panel{width:calc(100vw-20px);transform:none;top:20px;left:10px;right:auto}.lf-panel-body{min-height:260px}.lf-panel-text{min-height:200px}}`;
     document.head.appendChild(s);
   }
 
@@ -272,18 +256,6 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
       <div id="lf-mini" class="lf-mini"><span>译</span><div class="lf-mini-glow"></div></div>
     `;
     document.body.appendChild(wrapper);
-    // 打赏弹窗
-    const donateOverlay = document.createElement('div'); donateOverlay.id = 'lf-donate-overlay';
-    donateOverlay.innerHTML = '<div id="lf-donate"><h3>☕ 请作者喝杯咖啡</h3><p>已经帮你翻译了 <b id="lf-donate-count">10</b> 次啦~<br>如果觉得好用，可以赞助一点 token 吗？</p><div class="lf-donate-qr" id="lf-donate-qr"><div class="lf-donate-qr-item"><img src="'+chrome.runtime.getURL('icons/donate-wechat.png')+'" alt="微信"><span>微信</span></div><div class="lf-donate-qr-item"><img src="'+chrome.runtime.getURL('icons/donate-alipay.png')+'" alt="支付宝"><span>支付宝</span></div></div><div class="lf-donate-btns"><button class="lf-donate-btn lf-donate-later" id="lf-donate-later">下次一定</button><button class="lf-donate-btn lf-donate-pay" id="lf-donate-pay">❤️ 赞助token</button></div></div>';
-    document.body.appendChild(donateOverlay);
-    document.getElementById('lf-donate-later').addEventListener('click', () => {
-      donateOverlay.classList.remove('show');
-      document.getElementById('lf-donate-qr').classList.remove('show');
-      chrome.storage.local.set({ lf_donate_dismissed: Date.now() });
-    });
-    document.getElementById('lf-donate-pay').addEventListener('click', () => {
-      document.getElementById('lf-donate-qr').classList.add('show');
-    });
     bindEvents(wrapper);
   }
 
@@ -314,7 +286,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
     });
 
     updateMiniText();
-    mini.addEventListener('click', e => { e.stopPropagation(); mini.classList.add('translating'); mini.classList.add('translated'); btnTranslate.click(); });
+    mini.addEventListener('click', e => { if (dragMoved) return; e.stopPropagation(); mini.classList.add('translating'); mini.classList.add('translated'); btnTranslate.click(); });
 
     // 详情
     function toggleDetail() {
@@ -360,8 +332,6 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
         if (abortController && abortController.signal.aborted) { updateUsageBall(); return; }
         showTranslation = true;
         btnTranslate.classList.remove('translating'); btnTranslate.classList.add('done'); btnTranslate.textContent = t('translated');
-        // 打赏计数
-        try { await checkDonate(); } catch(e) {}
       }
     });
     // 取消
@@ -417,6 +387,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
     // 拖拽
     const orb = document.getElementById('lf-orb');
     orb.addEventListener('mousedown', startDrag); orb.addEventListener('touchstart', startDrag, { passive: false });
+    mini.addEventListener('mousedown', startDrag); mini.addEventListener('touchstart', startDrag, { passive: false });
     function startDrag(e) { if (e.target.closest('.lf-toggle,.lf-pill-btn,.lf-chevron,.lf-collapse-btn')) return; e.preventDefault(); const rect = wrapper.getBoundingClientRect(); const cx = e.touches ? e.touches[0].clientX : e.clientX, cy = e.touches ? e.touches[0].clientY : e.clientY; dragState = { startRight: window.innerWidth - rect.right, startBottom: window.innerHeight - rect.bottom, startX: cx, startY: cy }; dragMoved = false; document.addEventListener('mousemove', onDrag); document.addEventListener('mouseup', stopDrag); document.addEventListener('touchmove', onDrag, { passive: false }); document.addEventListener('touchend', stopDrag); }
     function onDrag(e) { if (!dragState) return; e.preventDefault(); const cx = e.touches ? e.touches[0].clientX : e.clientX, cy = e.touches ? e.touches[0].clientY : e.clientY; let r = dragState.startRight - (cx - dragState.startX), b = dragState.startBottom - (cy - dragState.startY); r = Math.max(0, Math.min(window.innerWidth - wrapper.offsetWidth, r)); b = Math.max(0, Math.min(window.innerHeight - wrapper.offsetHeight, b)); wrapper.style.right = r + 'px'; wrapper.style.bottom = b + 'px'; dragMoved = true; }
     function stopDrag() { dragState = null; document.removeEventListener('mousemove', onDrag); document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchmove', onDrag); document.removeEventListener('touchend', stopDrag); setTimeout(() => { dragMoved = false; }, 60); }
@@ -490,7 +461,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
   function getTabId() { return new Promise(r => { if (tabId!=null) { r(tabId); return; } chrome.runtime.sendMessage({ type:'GET_TAB_ID' }, resp => { if (chrome.runtime.lastError) { tabId='unknown'; r(tabId); return; } tabId = resp?.tabId ?? 'unknown'; r(tabId); }); }); }
 
   // ===== 翻译 =====
-  async function startTranslation(transSettings, opts={}) { const { continuous=true } = opts; if (isTranslated) restoreOriginal(); settings=transSettings; abortController=new AbortController(); pageTokens={ input:0,output:0,total:0,cacheHits:0,apiCalls:0 }; const cfg=MODES[mode]||MODES.medium;const textNodes=collectTextNodes(document.body,{ viewportOnly:!cfg.fullPage, viewportMargin:cfg.viewportMargin }); const inputEls=document.body.querySelectorAll('input[type="submit"],input[type="button"],button:not(:empty),[role="button"]'); for (const el of inputEls) { if (shouldSkip(el)) continue; const v=(el.value||'').trim(); if (v.length<3||!isTranslatable(v)) continue; if (!isInViewport(el,200)) continue; textNodes.push({ node:el, text:v, y:el.getBoundingClientRect().top, isInput:true }); } textNodes.sort((a,b)=>a.y-b.y); if (!textNodes.length) { showToast('warning','⚠️ '+t('noText')); return; } const stats=await translateAndApply(textNodes, textNodes.length); if (abortController.signal.aborted) return; isTranslated=true; isTranslating=false; if (continuous) { if (cfg.scroll) startScrollObserver(); if (cfg.mutation) startMutationObserver(); } updateUsageBall(); if (!stats.allCached) { const ok=stats.completed-stats.failed; showToast('success',stats.failed?`✅ ${ok}/${stats.completed} ${t('segments')} (${stats.failed} ${t('failed')})`:`✅ ${t('completed')} (${stats.completed} ${t('segments')})`); } }
+  async function startTranslation(transSettings, opts={}) { const { continuous=true } = opts; if (isTranslated) { restoreOriginal(); showTranslation = false; return; } settings=transSettings; abortController=new AbortController(); pageTokens={ input:0,output:0,total:0,cacheHits:0,apiCalls:0 }; const cfg=MODES[mode]||MODES.medium;const textNodes=collectTextNodes(document.body,{ viewportOnly:!cfg.fullPage, viewportMargin:cfg.viewportMargin }); const inputEls=document.body.querySelectorAll('input[type="submit"],input[type="button"],button:not(:empty),[role="button"]'); for (const el of inputEls) { if (shouldSkip(el)) continue; const v=(el.value||'').trim(); if (v.length<3||!isTranslatable(v)) continue; if (!isInViewport(el,200)) continue; textNodes.push({ node:el, text:v, y:el.getBoundingClientRect().top, isInput:true }); } textNodes.sort((a,b)=>a.y-b.y); if (!textNodes.length) { showToast('warning','⚠️ '+t('noText')); return; } const stats=await translateAndApply(textNodes, textNodes.length); if (abortController.signal.aborted) return; isTranslated=true; isTranslating=false; if (continuous) { if (cfg.scroll) startScrollObserver(); if (cfg.mutation) startMutationObserver(); } updateUsageBall(); if (!stats.allCached) { const ok=stats.completed-stats.failed; showToast('success',stats.failed?`✅ ${ok}/${stats.completed} ${t('segments')} (${stats.failed} ${t('failed')})`:`✅ ${t('completed')} (${stats.completed} ${t('segments')})`); } }
   async function translateAndApply(textNodes, totalForProgress) { let apiTime=0,cacheHits=0,completed=0,failed=0; const apiErrors=[]; const CONCURRENCY=(MODES[mode]||MODES.medium).concurrency; if (!abortController||abortController.signal.aborted) abortController=new AbortController(); for (const tn of textNodes) inFlightNodes.add(tn.node); isTranslating=true; try { const toTranslate=[]; for (let i=0;i<textNodes.length;i++) { const tn=textNodes[i]; if (translationCache.has(tn.text)) { applyTranslation(tn.node,tn.text,translationCache.get(tn.text),tn.subNodes); cacheHits++; completed++; } else toTranslate.push({ ...tn, id:String(i) }); } pageTokens.cacheHits+=cacheHits; if (!toTranslate.length) { window._lfSetProgress?.(completed,textNodes.length); return { apiTime,cacheHits,completed,failed,allCached:true }; } const batches=[]; let cur={ items:[],chars:0 },limit=(MODES[mode]||MODES.medium).batchLimit; for (const tn of toTranslate) { if (cur.chars+tn.text.length>limit&&cur.items.length) { batches.push(cur); cur={ items:[],chars:0 }; } cur.items.push(tn); cur.chars+=tn.text.length; } if (cur.items.length) batches.push(cur); let nextIdx=0; async function processBatch(batch) { if (abortController.signal.aborted) throw new DOMException('Aborted','AbortError'); const reallyNeed=[]; for (const item of batch.items) { if (translationCache.has(item.text)) { applyTranslation(item.node,item.text,translationCache.get(item.text),item.subNodes); cacheHits++; completed++; } else reallyNeed.push(item); } if (!reallyNeed.length) return; const t=performance.now(); const result=await translateBatch(reallyNeed); if (abortController.signal.aborted) throw new DOMException('Aborted','AbortError'); apiTime+=performance.now()-t; if (result) { for (const item of reallyNeed) { const tr=result[item.id]; if (tr) { if (tr!==item.text) { applyTranslation(item.node,item.text,tr,item.subNodes); } else { if (item.subNodes) { for (const sn of item.subNodes) translationMap.set(sn,{ original:sn.textContent?sn.textContent.trim():(sn.value||'').trim() }); } else { translationMap.set(item.node,{ original:item.text }); } } translationCache.set(item.text,tr); markCacheDirty(); } } } else { failed+=reallyNeed.length; } completed+=reallyNeed.length; window._lfSetProgress?.(completed,textNodes.length); } async function worker() { while (nextIdx<batches.length) { if (abortController.signal.aborted) return; const idx=nextIdx++; try { await processBatch(batches[idx]); } catch(e) { if (e.name==='AbortError') return; apiErrors.push(e.message||String(e)); failed+=batches[idx].items.length; completed+=batches[idx].items.length; } } } await Promise.all(Array.from({ length:Math.min(CONCURRENCY,batches.length) },()=>worker())); if (apiErrors.length) showApiError(apiErrors[0]); } finally { for (const tn of textNodes) inFlightNodes.delete(tn.node); isTranslating=false; } return { apiTime,cacheHits,completed,failed }; }
   function translateBatch(items) { return new Promise((resolve,reject)=>{ try { chrome.runtime.sendMessage({ type:'BATCH_TRANSLATE', items:items.map(it=>({ id:it.id, text:it.text })), settings:{ apiKey:settings.apiKey,apiUrl:settings.apiUrl,model:settings.model,sourceLang:settings.sourceLang,targetLang:settings.targetLang } }, resp=>{ if (chrome.runtime.lastError) { if (chrome.runtime.lastError.message?.includes('context invalidated')) console.warn('[LinguaFlow] 扩展已更新，请刷新页面'); reject(new Error(chrome.runtime.lastError.message)); } else if (resp?.success) { if (resp.usage) addPageTokens(resp.usage); resolve(resp.translations); } else reject(new Error(resp?.error||'翻译失败')); }); } catch(e) { reject(e); } }); }
   function applyTranslation(node, originalText, translatedText, subNodes) { if (subNodes&&subNodes.length>1) { for (let i=0;i<subNodes.length;i++) { const orig=subNodes[i].textContent?subNodes[i].textContent.trim():(subNodes[i].value||'').trim(); if (subNodes[i].nodeType===Node.ELEMENT_NODE) { subNodes[i].value=i===0?translatedText:''; } else { subNodes[i].textContent=i===0?translatedText:''; } translationMap.set(subNodes[i],{ original:orig }); } const p=node.parentElement||node; if (p&&p.setAttribute) p.setAttribute('data-linguaflow-translated','true'); } else if (node.nodeType===Node.ELEMENT_NODE) { translationMap.set(node,{ original:originalText }); node.value=translatedText; if (node.setAttribute) node.setAttribute('data-linguaflow-translated','true'); } else { translationMap.set(node,{ original:originalText }); node.textContent=translatedText; const p=node.parentElement; if (p) { p.setAttribute('data-linguaflow-translated','true'); } } }
@@ -508,7 +479,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
   async function translatePending() { if (!pendingNodes.length||!isTranslated||isTranslating) return; const nodes=[...pendingNodes]; pendingNodes=[]; await translateAndApply(nodes,nodes.length); }
 
   // ===== 消息 =====
-  chrome.runtime.onMessage.addListener((msg,sender,sendResponse)=>{ switch(msg.type) { case 'START_TRANSLATION':sendResponse({ success:true });showTranslation=true;updateUsageBall();startTranslation(msg.settings,{ continuous:true }).catch(e=>console.error(e));break; case 'RESTORE_PAGE':restoreOriginal();showTranslation=false;updateUsageBall();showToast('warning',t('restored'));sendResponse({ success:true });break; case 'GET_STATUS':sendResponse({ isTranslated,isTranslating });break; case 'UI_LANG_CHANGED':if(msg.uiLang&&msg.uiLang!==uiLang){uiLang=msg.uiLang;updateAllUIText();updateUsageBall();updateDetailNumbers();const sel=document.getElementById('lf-ui-lang');if(sel)sel.value=uiLang;}break; case 'TOGGLE_PANEL':togglePanel();break; } });
+  chrome.runtime.onMessage.addListener((msg,sender,sendResponse)=>{ switch(msg.type) { case 'START_TRANSLATION':if(isTranslating){if(abortController)abortController.abort();restoreOriginal();if(mutationObserver){mutationObserver.disconnect();mutationObserver=null;}isTranslating=false;showTranslation=false;updateUsageBall();sendResponse({success:true});}else if(showTranslation){restoreOriginal();if(mutationObserver){mutationObserver.disconnect();mutationObserver=null;}showTranslation=false;updateUsageBall();sendResponse({success:true});}else{sendResponse({success:true});showTranslation=true;updateUsageBall();startTranslation(msg.settings,{continuous:true}).catch(e=>console.error(e));}break; case 'RESTORE_PAGE':restoreOriginal();showTranslation=false;updateUsageBall();showToast('warning',t('restored'));sendResponse({ success:true });break; case 'GET_STATUS':sendResponse({ isTranslated,isTranslating });break; case 'UI_LANG_CHANGED':if(msg.uiLang&&msg.uiLang!==uiLang){uiLang=msg.uiLang;updateAllUIText();updateUsageBall();updateDetailNumbers();const sel=document.getElementById('lf-ui-lang');if(sel)sel.value=uiLang;}break; case 'TOGGLE_PANEL':togglePanel();break; } });
   async function saveTabMode(on) { const id=await getTabId(); await chrome.storage.local.set({ [`tmode_${id}`]:on }); }
   async function getTabMode() { const id=await getTabId(); const r=await chrome.storage.local.get(`tmode_${id}`); return r[`tmode_${id}`]||false; }
   async function loadAndTranslate(opts={}) { try { const apiSettings=await readApiSettings(); if (!apiSettings.apiKey) { showToast('error','⚠️ '+t('noKey')); return; } if (apiSettings.supportsConcurrency===false) { showApiError('此 API 不支持并发，请在 Popup 中更换 API 或开启"支持并发"选项'); return; } const s=await chrome.storage.sync.get({ sourceLang:'auto',targetLang:'zh-CN',hoverOriginal:true,showProgress:true,mode:null }); if (s.mode) { mode=s.mode; } settings={ ...apiSettings, ...s }; abortController=new AbortController(); try { await startTranslation(settings,opts); } catch(e) { console.error(e); updateUsageBall(); } } catch(e) { if(!e.message?.includes('context invalidated')) console.error(e); } }
@@ -753,22 +724,6 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
     if (Date.now() - lastShown < 86400000) return;
     showToast('success', '🆕 有新版本 v' + cache.lf_update_cache.latest + '！点击下载');
     await chrome.storage.local.set({ lf_widget_update_shown: Date.now() });
-  }
-
-  async function checkDonate() {
-    const key = 'lf_usage_count';
-    const stored = await chrome.storage.local.get([key, 'lf_donate_dismissed']);
-    const count = (stored[key] || 0) + 1;
-    await chrome.storage.local.set({ [key]: count });
-    if (count < 10) return;
-    const dismissed = stored.lf_donate_dismissed || 0;
-    // 7 天内不重复弹
-    if (Date.now() - dismissed < 7 * 24 * 3600 * 1000) return;
-    const overlay = document.getElementById('lf-donate-overlay');
-    const countEl = document.getElementById('lf-donate-count');
-    if (!overlay) return;
-    if (countEl) countEl.textContent = count;
-    overlay.classList.add('show');
   }
 
   console.log('🌐 Faluber Translate 已加载');
