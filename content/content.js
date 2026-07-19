@@ -713,16 +713,7 @@ button:focus-visible{outline:2px solid rgba(124,92,252,0.5);outline-offset:2px}
       document.getElementById('lf-mini').classList.add('visible');
       document.getElementById('btn-collapse').classList.add('collapsed');
     }
-    updateMiniText(); const stored=await safeStorage.get('uiLang'); if(stored.uiLang&&stored.uiLang!==uiLang){ uiLang=stored.uiLang; updateAllUIText(); const sel=document.getElementById('lf-ui-lang'); if(sel) sel.value=uiLang; } try{ await getTabId(); await loadPersistentCache(); if(await getTabMode()){ switchIntent=true; showTranslation=true; updateUsageBall(); setTimeout(()=>loadAndTranslate({ continuous:true }),800); } checkWidgetUpdate(); }catch{} } catch(e) { if(!e.message?.includes('context invalidated')) console.error('[LF] 初始化失败:',e.message); } })();
-  async function checkWidgetUpdate() {
-    const cache = await chrome.storage.local.get('lf_update_cache');
-    if (!cache.lf_update_cache || cache.lf_update_cache.status !== 'hasupdate') return;
-    // 24 小时内不重复提醒
-    const lastShown = (await chrome.storage.local.get('lf_widget_update_shown')).lf_widget_update_shown || 0;
-    if (Date.now() - lastShown < 86400000) return;
-    showToast('success', '🆕 有新版本 v' + cache.lf_update_cache.latest + '！点击下载');
-    await chrome.storage.local.set({ lf_widget_update_shown: Date.now() });
-  }
+    updateMiniText(); const stored=await safeStorage.get('uiLang'); if(stored.uiLang&&stored.uiLang!==uiLang){ uiLang=stored.uiLang; updateAllUIText(); const sel=document.getElementById('lf-ui-lang'); if(sel) sel.value=uiLang; } try{ await getTabId(); await loadPersistentCache(); if(await getTabMode()){ switchIntent=true; showTranslation=true; updateUsageBall(); setTimeout(()=>loadAndTranslate({ continuous:true }),800); } }catch{} } catch(e) { if(!e.message?.includes('context invalidated')) console.error('[LF] 初始化失败:',e.message); } })();
 
   console.log('🌐 Faluber Translate 已加载');
 })();

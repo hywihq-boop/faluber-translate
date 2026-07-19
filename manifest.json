@@ -2,7 +2,6 @@
   "manifest_version": 3,
   "name": "Faluber AI翻译",
   "version": "0.1.1",
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr/0JqlGI0WBuZTeDAL1cp/d2fhAFHFX+Z6LsIXwI12YYRghkpirCfe+oYxCkXwdFqDecghDAOUHOa7ZMqJbl7xU4UfGkD8gPifYsJLTKMdNxfO1qub43CA19S4UFDcUHbh2l5ITx2wzO1Qn2oyDLJAKuv3lx51yyxFKzttoI2mLM0QUkO6BMa8E2YrNA4ctvHLt7KGASyA25nCNglBu6piLIkPokN9ucVB577Si86W1/N18eTjk64sTHTRIoJq+lc+zUWE7cQqazzldxN/ohLLkLI9rbpugJv+McBz9VGUcKY8YACniQ1BOgZ7AgE35cxzVWDYt/u/kZmJzwcS54DQIDAQAB",
   "description": "基于 AI 的网页翻译插件，支持全球语言互译，一键翻译整页",
 
   "icons": {
@@ -23,8 +22,7 @@
 
   "permissions": [
     "storage",
-    "activeTab",
-    "alarms"
+    "activeTab"
   ],
 
   "host_permissions": [
